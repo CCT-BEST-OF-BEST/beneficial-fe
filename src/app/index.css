@@ -132,6 +132,11 @@
     .bg-progress-gradient {
         background: linear-gradient(90deg, #FFDB7D 23.94%, #FFAA34 100%);
     }
+
+    .bg-triangle {
+        background: linear-gradient(135deg, #F4E6B6 50%, white 50%);
+    }
+
 }
 
 @layer base {

@@ -22,7 +22,9 @@ export default function StudyListItem() {
         </div>
         <div className="text-orange-primary typography-SB6 flex items-center">
           학습 완료 25.07.12
-          <ArrowIcon />
+          <div className="flex h-6 w-6 items-center justify-center">
+            <ArrowIcon className="h-3 w-3 scale-x-[-1]" />
+          </div>
         </div>
       </li>
 

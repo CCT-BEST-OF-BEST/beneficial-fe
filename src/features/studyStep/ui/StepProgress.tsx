@@ -11,7 +11,7 @@ export default function StepProgress({ currentStep }: StepProgressProps) {
 
   const getCircleStyle = (step: number) => {
     const base =
-      'z-20 flex justify-center items-center typography-SB5 h-[50px] w-[50px] rounded-full font-medium';
+      'flex justify-center items-center typography-SB5 h-[50px] w-[50px] rounded-full font-medium';
     const isCurrent = currentStep === step;
     const text = isCurrent ? 'text-white' : 'text-gray-3';
     const bg = isCurrent ? bgColorMap[step] : 'bg-white';

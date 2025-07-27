@@ -28,7 +28,7 @@ export default function StudyDialog({ open, onOpenChange }: StudyDialogProps) {
 
           <div className="px-19 mt-10">
             <div>
-              <img src={StudyDialogImage} className="h-[290x] w-[290x]" alt="" />
+              <img src={StudyDialogImage} className="h-[290px] w-[290px]" alt="" />
             </div>
             <Link
               to={'/study/2'}

@@ -10,6 +10,7 @@ export default function Button({ step = 1, children, className, ...props }: Butt
     1: 'border-sky-primary bg-sky-primary disabled:text-sky-primary disabled:bg-white',
     2: 'border-green-primary bg-green-primary disabled:text-green-primary disabled:bg-white',
     3: 'border-red-primary bg-red-primary disabled:text-red-primary disabled:bg-white',
+    4: 'border-orange-primary bg-orange-primary disabled:text-orange-primary disabled:bg-white',
   };
 
   return (

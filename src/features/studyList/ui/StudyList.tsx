@@ -5,7 +5,7 @@ import Separator from '@/shared/ui/Separator.tsx';
 import StudyListItem from '@/features/studyList/ui/StudyListItem.tsx';
 
 export default function StudyList() {
-  const [progress] = useState(0);
+  const [progress] = useState(30);
 
   return (
     <section>
