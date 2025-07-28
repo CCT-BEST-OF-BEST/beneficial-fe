@@ -4,11 +4,12 @@ import StudyDialogImage from '@/assets/StudyDialogImage.png';
 import { Link } from 'react-router-dom';
 
 interface StudyDialogProps {
+  id: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export default function StudyDialog({ open, onOpenChange }: StudyDialogProps) {
+export default function StudyDialog({ id, open, onOpenChange }: StudyDialogProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -16,9 +17,9 @@ export default function StudyDialog({ open, onOpenChange }: StudyDialogProps) {
         <Dialog.Content className="border-orange-primary fixed left-1/2 top-1/2 w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 bg-white pb-8 shadow-lg">
           <div className="bg-orange-primary mb-4 flex justify-between rounded-t-xl px-6 pb-3 pt-6">
             <div>
-              <Dialog.Title className="typography-SB1 mb-1 text-white">2차시</Dialog.Title>
+              <Dialog.Title className="typography-SB1 mb-1 text-white">{id}차시</Dialog.Title>
               <Dialog.Description className="typography-SB3 text-white">
-                비슷한 동사, 다른 의미 2
+                비슷한 동사, 다른 의미 {id}
               </Dialog.Description>
             </div>
             <Dialog.Close className="h-7 w-7 cursor-pointer rounded-full bg-white p-2">

@@ -1,0 +1,39 @@
+[
+  {
+    "id": 1,
+    "title": "비슷한 동사, 다른 의미1: 두껍다 VS 두텁다 | 부수다 VS 부시다 | 찢다 VS 찧다 | 젖히다 VS 제치다",
+    "isCompleted": true,
+    "completeDate": "25.07.12",
+    "isAvailable": true
+  },
+  {
+    "id": 2,
+    "title": "비슷한 동사, 다른 의미2: 가르치다 VS 가르키다 | 바라다 VS 바래다 | 맞추다 VS 맞히다 | 잃다 VS 잊다",
+    "isCompleted": false,
+    "isAvailable": true
+  },
+  {
+    "id": 3,
+    "title": "비슷한 동사, 다른 의미3: 바치다 VS 받치다 | 다르다 VS 틀리다 | 작다 VS 적다 | 닫다 VS 닿다",
+    "isCompleted": false,
+    "isAvailable": false
+  },
+  {
+    "id": 4,
+    "title": "비슷한 동사, 다른 의미4: 비추다 VS 비치다 | 벌리다 VS 벌이다 | 들르다 VS 들리다 | 섞다 VS 썩다",
+    "isCompleted": false,
+    "isAvailable": false
+  },
+  {
+    "id": 5,
+    "title": "비슷한 동사, 다른 의미5: 감다 VS 감기다 | 걷다 VS 거두다 | 앉히다 VS 앉다 | 눕히다 VS 눕다",
+    "isCompleted": false,
+    "isAvailable": false
+  },
+  {
+    "id": 6,
+    "title": "비슷한 동사, 다른 의미6: 익히다 VS 익다 | 마치다 VS 마치 | 맞다 VS 맡다 | 돕다 VS 도움되다",
+    "isCompleted": false,
+    "isAvailable": false
+  }
+]

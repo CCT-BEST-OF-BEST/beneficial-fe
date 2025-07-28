@@ -3,6 +3,7 @@ import DropDownIcon from '@/assets/DropDownIcon.svg?react';
 import FlagIcon from '@/assets/FlagIcon.svg?react';
 import Separator from '@/shared/ui/Separator.tsx';
 import StudyListItem from '@/features/studyList/ui/StudyListItem.tsx';
+import studyList from '@/features/studyList/api/studyList.json';
 
 export default function StudyList() {
   const [progress] = useState(30);
@@ -32,13 +33,16 @@ export default function StudyList() {
         </div>
       </div>
       <ul className="mt-7 h-[calc(100vh-550px)] flex-1 space-y-4 overflow-auto">
-        <StudyListItem />
-        <StudyListItem />
-        <StudyListItem />
-        <StudyListItem />
-        <StudyListItem />
-        <StudyListItem />
-        <StudyListItem />
+        {studyList.map(item => (
+          <StudyListItem
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            isCompleted={item.isCompleted}
+            completeDate={item.completeDate}
+            isAvailable={item.isAvailable}
+          />
+        ))}
       </ul>
     </section>
   );
