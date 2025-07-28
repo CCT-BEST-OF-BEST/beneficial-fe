@@ -41,7 +41,7 @@ export default function StudyStep1({ handleStepClick }: { handleStepClick: () =>
           <ArrowIcon className="text-gray-2 scale-x-[-1]" />
         </button>
       </div>
-      <h3 className="typography-SB1 text-gray-2 mt-11 text-center">
+      <h3 className="typography-SB1 text-gray-2 mt-11 mb-4 text-center">
         카드를 뒤집어서 어휘를 확인해보세요.
       </h3>
       <Button

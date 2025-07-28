@@ -76,7 +76,6 @@ export default function StudyStep3() {
         </div>
         <ReviewPopup />
       </div>
-
       <Badge type={badge} />
 
       <div className="mx-auto flex h-[210px] w-[228px] items-center justify-center">
