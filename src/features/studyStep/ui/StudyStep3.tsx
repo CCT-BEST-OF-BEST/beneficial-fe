@@ -78,7 +78,7 @@ export default function StudyStep3() {
       </div>
       <Badge type={badge} />
 
-      <div className="mx-auto flex h-[210px] w-[228px] items-center justify-center">
+      <div className="mx-auto flex h-[190px] w-[228px] items-center justify-center">
         <img src={`${import.meta.env.VITE_API_BASE_URL}/learning/images/${problem.image}`} />
       </div>
 

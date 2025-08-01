@@ -5,9 +5,9 @@ interface BadgeProps {
 }
 
 const typeToColor: Record<BadgeProps['type'], string> = {
-  첫학습: 'bg-gray-2',
-  복습: 'bg-[#9DD4F0]',
-  재도전: 'bg-[#FABF64]',
+  '첫학습': 'bg-gray-2',
+  '복습': 'bg-[#9DD4F0]',
+  '재도전': 'bg-[#FABF64]',
   '잠시후복습': 'bg-[#FABF64]',
   '훌륭해요!': 'bg-[#9DD4F0]',
 };

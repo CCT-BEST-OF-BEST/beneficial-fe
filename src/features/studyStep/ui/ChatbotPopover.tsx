@@ -5,7 +5,7 @@ import { useChatbot } from '@/features/studyStep/hooks/useChatbot.ts';
 import { useEffect, useRef } from 'react';
 
 export default function ChatbotPopover() {
-  const { messages, message, setMessage, handleSendMessage } = useChatbot();
+  const { messages, message, loading, setMessage, handleSendMessage } = useChatbot();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +28,7 @@ export default function ChatbotPopover() {
           sideOffset={16}
           className="z-50 h-[500px] w-[400px] rounded-xl bg-white p-6 shadow-lg"
         >
-          <div className="h-[400px] space-y-4 overflow-auto">
+          <div className="h-[400px] space-y-4 overflow-auto whitespace-pre-line">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
@@ -50,6 +50,18 @@ export default function ChatbotPopover() {
                 </div>
               </div>
             ))}
+
+            {loading && (
+              <div className="flex justify-start gap-3">
+                <div className="flex h-9 w-9 items-center justify-center">
+                  <img src={Logo} alt="Bot" className="h-[16px] w-[24px]" />
+                </div>
+                <div className="border-orange-primary text-gray-4 typography-R2 max-w-[70%] rounded-3xl rounded-tl-none border bg-[#FFF8E5] px-5 py-4">
+                  답변을 작성 중이에요...
+                </div>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 

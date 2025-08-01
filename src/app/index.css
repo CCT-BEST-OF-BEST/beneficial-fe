@@ -128,11 +128,11 @@
 }
 
 @layer utilities {
-    .text-shadow-white-4px {
-        text-shadow: 4px 4px 0 #fff,
-        -4px 4px 0 #fff,
-        4px -4px 0 #fff,
-        -4px -4px 0 #fff;
+    .text-shadow-white-3px {
+        text-shadow: 2px 2px 0 #fff,
+        -2px 2px 0 #fff,
+        2px -2px 0 #fff,
+        -2px -2px 0 #fff;
     }
 
     .bg-progress-gradient {
