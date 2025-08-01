@@ -39,7 +39,7 @@ export default function StudyDetail() {
           <HomeButton color={'sky'} />
           {currentStep < 3 && <ChatbotPopover />}
         </div>
-        <div className="font-one-mobile-pop relative inline-block text-5xl">
+        <div className="font-one-mobile-pop relative inline-block text-5xl ">
           <span
             aria-hidden
             className="absolute left-0 top-0 z-0 text-white"
@@ -52,7 +52,7 @@ export default function StudyDetail() {
             {currentStep === 3 && '도전 맞춤법'}
           </span>
 
-          <h1 className={cn('relative z-10', textColorMap[currentStep])}>
+          <h1 className={cn('relative ', textColorMap[currentStep])}>
             {currentStep === 1 && '오늘의 맞춤법'}
             {currentStep === 2 && '예제 풀이'}
             {currentStep === 3 && '도전 맞춤법'}

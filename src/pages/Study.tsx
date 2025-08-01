@@ -6,7 +6,7 @@ export default function Study() {
     <>
       <section className="mb-16 flex justify-between">
         <HomeButton color={'sky'} />
-        <div className="font-one-mobile-pop relative inline-block text-5xl">
+        <div className="font-one-mobile-pop relative z-0 inline-block text-5xl">
           <span
             aria-hidden
             className="absolute left-0 top-0 z-0 text-white"
@@ -17,7 +17,7 @@ export default function Study() {
             메인학습
           </span>
 
-          <h1 className="text-orange-primary relative z-10">메인학습</h1>
+          <h1 className="text-orange-primary relative">메인학습</h1>
         </div>
         <div className="w-[50px]" />
       </section>
