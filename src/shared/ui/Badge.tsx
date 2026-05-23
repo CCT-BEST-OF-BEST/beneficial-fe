@@ -1,7 +1,9 @@
 import { cn } from '@/shared/lib/utils.ts';
 
+export type BadgeType = '첫학습' | '복습' | '재도전' | '잠시후복습' | '훌륭해요!';
+
 interface BadgeProps {
-  type: '첫학습' | '복습' | '재도전' | '잠시후복습' | '훌륭해요!';
+  type: BadgeType;
 }
 
 const typeToColor: Record<BadgeProps['type'], string> = {

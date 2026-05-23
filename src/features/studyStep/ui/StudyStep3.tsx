@@ -8,19 +8,47 @@ import ArrowIcon from '@/assets/ArrowIcon.svg?react';
 import { postStep3Answer } from '@/features/studyStep/api/postStep3Answer.ts';
 import { getStep3Progress } from '@/features/studyStep/api/getStep3Progress.ts';
 import CompleteDialog from '@/features/studyStep/ui/CompleteDialog.tsx';
+import type { BadgeType } from '@/shared/ui/Badge.tsx';
+
+interface Step3Problem {
+  problem_id: number;
+  image: string;
+  sentence_part1: string;
+  sentence_part2: string;
+  badge: BadgeType;
+}
+
+interface Step3NextProblemResponse {
+  is_completed: boolean;
+  problem: Step3Problem;
+}
+
+interface Step3AnswerResponse {
+  correct_answer: string;
+  badge: BadgeType;
+  explanation: string;
+}
+
+interface Step3ProgressResponse {
+  progress: {
+    completed_problems: unknown[];
+    total_problems: number;
+  };
+}
 
 export default function StudyStep3() {
   const [progress, setProgress] = useState(0);
-  const [problem, setProblem] = useState({});
+  const [problem, setProblem] = useState<Step3Problem | null>(null);
   const [answer, setAnswer] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState('');
-  const [badge, setBadge] = useState('첫학습');
+  const [badge, setBadge] = useState<BadgeType>('첫학습');
   const [isAnswered, setIsAnswered] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchProblem = async () => {
     try {
-      const data = await getStep3NextProblem();
+      const data = (await getStep3NextProblem()) as Step3NextProblemResponse | undefined;
+      if (!data) return;
 
       if (data.is_completed) {
         setIsDialogOpen(true);
@@ -42,15 +70,17 @@ export default function StudyStep3() {
   }, []);
 
   const handleSubmit = async () => {
+    if (!problem) return;
     if (!answer.trim() && !isAnswered) return;
 
     if (!isAnswered) {
       try {
-        const result = await postStep3Answer({
+        const result = (await postStep3Answer({
           problem_id: problem.problem_id,
           answer,
-        });
-        const data = await getStep3Progress();
+        })) as Step3AnswerResponse | undefined;
+        const data = (await getStep3Progress()) as Step3ProgressResponse | undefined;
+        if (!result || !data) return;
 
         setCorrectAnswer(result.correct_answer);
         setBadge(result.badge);
@@ -79,18 +109,20 @@ export default function StudyStep3() {
       <Badge type={badge} />
 
       <div className="mx-auto flex h-[190px] w-[228px] items-center justify-center">
-        <img src={`${import.meta.env.VITE_API_BASE_URL}/learning/images/${problem.image}`} />
+        {problem && (
+          <img src={`${import.meta.env.VITE_API_BASE_URL}/learning/images/${problem.image}`} />
+        )}
       </div>
 
       <div className="flex items-center justify-center gap-4">
-        <span className="typography-M2">({problem.problem_id})</span>
-        <span className="typography-M1">{problem.sentence_part1}</span>
+        <span className="typography-M2">{problem ? `(${problem.problem_id})` : ''}</span>
+        <span className="typography-M1">{problem?.sentence_part1}</span>
         <div
           className={cn('typography-SB1 min-w-[140px] rounded-lg bg-[#F9F9F9] py-3 text-center')}
         >
           <span className="text-[#D9D9D9]">{correctAnswer || '?'}</span>
         </div>
-        <span className="typography-M1">{problem.sentence_part2}</span>
+        <span className="typography-M1">{problem?.sentence_part2}</span>
       </div>
 
       <div className="mb-9 flex items-end justify-between">

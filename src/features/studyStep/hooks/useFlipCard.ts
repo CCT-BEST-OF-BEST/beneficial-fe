@@ -6,18 +6,20 @@ const getImageUrl = (path: string) => {
   return `${import.meta.env.VITE_API_BASE_URL}/learning/images/${filename}`;
 };
 
+interface CardPair {
+  pair_id: string;
+  word1: string;
+  word2: string;
+  order: number;
+  card1: { card_id: string; front_image: string; back_image: string };
+  card2: { card_id: string; front_image: string; back_image: string };
+}
+
 export const useFlipCard = () => {
   const [cards, setCards] = useState<{
     success: boolean;
     total_pairs: number;
-    card_pairs: {
-      pair_id: string;
-      word1: string;
-      word2: string;
-      order: number;
-      card1: { card_id: string; front_image: string; back_image: string };
-      card2: { card_id: string; front_image: string; back_image: string };
-    }[];
+    card_pairs: CardPair[];
   } | null>(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,8 +30,9 @@ export const useFlipCard = () => {
     const fetchCards = async () => {
       try {
         const data = await getStep1Cards();
+        if (!data) return;
 
-        const transformedPairs = data.card_pairs.map(pair => ({
+        const transformedPairs = data.card_pairs.map((pair: CardPair) => ({
           ...pair,
           card1: {
             ...pair.card1,
