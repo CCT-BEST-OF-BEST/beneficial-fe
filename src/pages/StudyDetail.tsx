@@ -8,6 +8,7 @@ import { useStep } from '@/features/studyStep/hooks/StepContext.tsx';
 import { cn } from '@/shared/lib/utils.ts';
 import { useEffect } from 'react';
 import { postStep3Reset } from '@/features/studyStep/api/postStep3Reset.ts';
+import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
 
 const textColorMap: Record<number, string> = {
   1: 'text-sky-primary',
@@ -59,7 +60,10 @@ export default function StudyDetail() {
           </h1>
         </div>
 
-        <StepProgress currentStep={currentStep} />
+        <div className="flex items-center gap-4">
+          <StepProgress currentStep={currentStep} />
+          <AuthStatusButton />
+        </div>
       </section>
 
       <section className="flex-1 rounded-2xl bg-white px-11 pt-10">

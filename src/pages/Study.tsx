@@ -1,5 +1,6 @@
 import HomeButton from '@/shared/ui/HomeButton.tsx';
 import StudyList from '@/features/studyList/ui/StudyList.tsx';
+import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
 
 export default function Study() {
   return (
@@ -19,7 +20,7 @@ export default function Study() {
 
           <h1 className="text-orange-primary relative">메인학습</h1>
         </div>
-        <div className="w-[50px]" />
+        <AuthStatusButton />
       </section>
       <StudyList />
     </>

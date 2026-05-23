@@ -2,33 +2,20 @@ import { Link } from 'react-router-dom';
 import AirplaneImg from '@/assets/AirplaneImg.svg?react';
 import CharacterImg from '@/assets/CharacterImg.svg?react';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
+import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
 
 export default function Home() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   return (
     <>
       <section className="mb-16">
         <div className="mb-6 flex items-center justify-between">
-        <h2 className="typography-SB5 mb-6 inline-block rounded-full bg-white px-5 py-3 text-[#8B8B8B]">
-          <span className="font-bold">{user?.display_name ?? '방문 학생'}</span>{' '}
-          <span className="font-light">| 소담 다함께 돌봄센터</span>
-        </h2>
-          {user ? (
-            <button
-              onClick={logout}
-              className="typography-SB3 text-orange-primary border-orange-primary rounded-full border-2 bg-white px-5 py-2"
-            >
-              로그아웃
-            </button>
-          ) : (
-            <Link
-              to="/auth/login"
-              className="typography-SB3 text-orange-primary border-orange-primary rounded-full border-2 bg-white px-5 py-2"
-            >
-              로그인
-            </Link>
-          )}
+          <h2 className="typography-SB5 inline-block rounded-full bg-white px-5 py-3 text-[#8B8B8B]">
+            <span className="font-bold">{user?.display_name ?? '방문 학생'}</span>{' '}
+            <span className="font-light">| 소담 다함께 돌봄센터</span>
+          </h2>
+          <AuthStatusButton />
         </div>
         <div className="font-one-mobile-pop relative w-full  text-center text-[60px]">
           <div
