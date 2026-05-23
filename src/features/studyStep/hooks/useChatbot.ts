@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { postAgentChat } from '@/features/studyStep/api/postAgentChat.ts';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
+import { getAgentProfile } from '@/features/studyStep/api/getAgentProfile.ts';
 
 interface ChatMessage {
   role: 'user' | 'bot';
@@ -18,6 +19,25 @@ export const useChatbot = () => {
     },
   ]);
   const [loading, setLoading] = useState(false);
+  const [weakConcepts, setWeakConcepts] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) {
+        setWeakConcepts([]);
+        return;
+      }
+
+      try {
+        const profile = await getAgentProfile();
+        setWeakConcepts(profile.weak_concepts.map(concept => concept.concept_key));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const handleSendMessage = async () => {
     if (!user) {
@@ -43,6 +63,9 @@ export const useChatbot = () => {
 
       const result = await postAgentChat({ sessionId, message });
       setSessionId(result.session_id);
+      if (result.weak_concepts.length > 0) {
+        setWeakConcepts(result.weak_concepts);
+      }
       setMessages(prev => [...prev, { role: 'bot', text: result.response }]);
     } catch (err) {
       console.error(err);
@@ -58,5 +81,13 @@ export const useChatbot = () => {
     }
   };
 
-  return { message, setMessage, handleSendMessage, messages, loading, isLoggedIn: Boolean(user) };
+  return {
+    message,
+    setMessage,
+    handleSendMessage,
+    messages,
+    loading,
+    weakConcepts,
+    isLoggedIn: Boolean(user),
+  };
 };

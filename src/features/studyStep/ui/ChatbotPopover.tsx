@@ -6,7 +6,15 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function ChatbotPopover() {
-  const { messages, message, loading, isLoggedIn, setMessage, handleSendMessage } = useChatbot();
+  const {
+    messages,
+    message,
+    loading,
+    weakConcepts,
+    isLoggedIn,
+    setMessage,
+    handleSendMessage,
+  } = useChatbot();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +38,22 @@ export default function ChatbotPopover() {
           className="z-50 h-[500px] w-[400px] rounded-xl bg-white p-6 shadow-lg"
         >
           <div className="h-[400px] space-y-4 overflow-auto whitespace-pre-line">
+            {isLoggedIn && weakConcepts.length > 0 && (
+              <div className="border-gray-1 rounded-xl border bg-[#FFFDF7] px-4 py-3">
+                <p className="typography-M4 text-gray-3 mb-2">헷갈리는 맞춤법</p>
+                <div className="flex flex-wrap gap-2">
+                  {weakConcepts.slice(0, 3).map(concept => (
+                    <span
+                      key={concept}
+                      className="typography-SB6 text-orange-primary rounded-full bg-[#FFF3D8] px-3 py-1"
+                    >
+                      {concept}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {messages.map((msg, idx) => (
               <div
                 key={idx}
