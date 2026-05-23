@@ -25,7 +25,6 @@ interface Problem {
   problem_id: number;
   sentence_part1: string;
   sentence_part2: string;
-  correct_answer: string;
 }
 
 export default function StudyStep2({ handleStepClick }: { handleStepClick: () => void }) {
@@ -42,11 +41,12 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
     handleRemoveCard,
     handleCheckAnswers,
   } = useDragDropCard();
+  const problemRangeLabel = `01 ~ ${String(problems?.problems?.length ?? 20).padStart(2, '0')}`;
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="mb-6 space-x-3">
-        <span className="text-green-primary typography-SB2">01 ~ 08</span>
+        <span className="text-green-primary typography-SB2">{problemRangeLabel}</span>
         <span className="typography-SB1">맞춤법에 맞는 낱말 카드를 선택하세요</span>
       </div>
 

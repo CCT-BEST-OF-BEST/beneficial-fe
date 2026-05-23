@@ -5,7 +5,6 @@ interface Step2Problem {
   problem_id: number;
   sentence_part1: string;
   sentence_part2: string;
-  correct_answer: string;
 }
 
 interface Step2ProblemsResponse {

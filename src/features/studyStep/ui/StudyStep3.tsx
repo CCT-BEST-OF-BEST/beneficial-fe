@@ -9,32 +9,7 @@ import { postStep3Answer } from '@/features/studyStep/api/postStep3Answer.ts';
 import { getStep3Progress } from '@/features/studyStep/api/getStep3Progress.ts';
 import CompleteDialog from '@/features/studyStep/ui/CompleteDialog.tsx';
 import type { BadgeType } from '@/shared/ui/Badge.tsx';
-
-interface Step3Problem {
-  problem_id: number;
-  image: string;
-  sentence_part1: string;
-  sentence_part2: string;
-  badge: BadgeType;
-}
-
-interface Step3NextProblemResponse {
-  is_completed: boolean;
-  problem: Step3Problem;
-}
-
-interface Step3AnswerResponse {
-  correct_answer: string;
-  badge: BadgeType;
-  explanation: string;
-}
-
-interface Step3ProgressResponse {
-  progress: {
-    completed_problems: unknown[];
-    total_problems: number;
-  };
-}
+import type { Step3Problem } from '@/features/studyStep/api/getStep3NextProblem.ts';
 
 export default function StudyStep3() {
   const [progress, setProgress] = useState(0);
@@ -47,7 +22,7 @@ export default function StudyStep3() {
 
   const fetchProblem = async () => {
     try {
-      const data = (await getStep3NextProblem()) as Step3NextProblemResponse | undefined;
+      const data = await getStep3NextProblem();
       if (!data) return;
 
       if (data.is_completed) {
@@ -55,8 +30,10 @@ export default function StudyStep3() {
         return;
       }
 
+      if (!data.problem) return;
+
       setProblem(data.problem);
-      setBadge(data.problem.badge);
+      setBadge(data.problem.badge ?? '첫학습');
       setAnswer('');
       setCorrectAnswer('');
       setIsAnswered(false);
@@ -75,15 +52,15 @@ export default function StudyStep3() {
 
     if (!isAnswered) {
       try {
-        const result = (await postStep3Answer({
+        const result = await postStep3Answer({
           problem_id: problem.problem_id,
           answer,
-        })) as Step3AnswerResponse | undefined;
-        const data = (await getStep3Progress()) as Step3ProgressResponse | undefined;
+        });
+        const data = await getStep3Progress();
         if (!result || !data) return;
 
         setCorrectAnswer(result.correct_answer);
-        setBadge(result.badge);
+        if (result.badge) setBadge(result.badge);
         setAnswer(result.explanation);
         setProgress((data.progress.completed_problems.length / data.progress.total_problems) * 100);
         setIsAnswered(true);
