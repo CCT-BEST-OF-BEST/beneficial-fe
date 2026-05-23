@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { getStep2Problems } from '@/features/studyStep/api/getStep2Problems.ts';
+import { postStep2Answer } from '@/features/studyStep/api/postStep2Answer.ts';
 
 interface Problem {
   problem_id: number;
@@ -19,6 +20,7 @@ export const useDragDropCard = () => {
   const [droppedCards, setDroppedCards] = useState<Record<number, string | null>>({});
   const [activeCard, setActiveCard] = useState<string | null>(null);
   const [isAllCorrect, setIsAllCorrect] = useState(false);
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     const fetchProblems = async () => {
@@ -59,29 +61,40 @@ export const useDragDropCard = () => {
     }
   };
 
-  const handleCheckAnswers = () => {
+  const handleCheckAnswers = async () => {
     if (!problems?.problems) return;
 
-    const correctedCards: Record<number, string | null> = {};
-    let correctCount = 0;
+    try {
+      setChecking(true);
 
-    problems.problems.forEach(problem => {
-      const userAnswer = droppedCards[problem.problem_id];
-      const correctAnswer = problem.correct_answer;
+      const results = await Promise.all(
+        problems.problems.map(problem =>
+          postStep2Answer({
+            problemId: problem.problem_id,
+            answer: droppedCards[problem.problem_id] ?? '',
+          })
+        )
+      );
 
-      // 정답이 맞으면 그대로 유지, 틀리면 제거
-      if (userAnswer === correctAnswer) {
-        correctedCards[problem.problem_id] = userAnswer;
-        correctCount++;
+      const correctedCards: Record<number, string | null> = {};
+      let correctCount = 0;
+
+      results.forEach(result => {
+        if (result.is_correct) {
+          correctedCards[result.problem_id] = result.user_answer;
+          correctCount++;
+        }
+      });
+
+      setDroppedCards(correctedCards);
+
+      if (correctCount === problems.problems.length) {
+        setIsAllCorrect(true);
       }
-      // 틀린 답이거나 답이 없으면 제거 (null로 설정하지 않음)
-    });
-
-    setDroppedCards(correctedCards);
-
-    // 모든 답이 정답인지 확인
-    if (correctCount === problems.problems.length) {
-      setIsAllCorrect(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setChecking(false);
     }
   };
 
@@ -98,6 +111,7 @@ export const useDragDropCard = () => {
     activeCard,
     isAllCorrect,
     isAllAnswered,
+    checking,
     handleDragStart,
     handleDragEnd,
     handleRemoveCard,

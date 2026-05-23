@@ -1,22 +1,18 @@
 import { END_POINT } from '@/shared/constant/apis.ts';
+import { apiFetch } from '@/shared/api/client.ts';
+
+interface Step2Problem {
+  problem_id: number;
+  sentence_part1: string;
+  sentence_part2: string;
+  correct_answer: string;
+}
+
+interface Step2ProblemsResponse {
+  problems: Step2Problem[];
+  answer_options: string[];
+}
 
 export const getStep2Problems = async () => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-  try {
-    const res = await fetch(`${baseUrl}${END_POINT.GET_STEP2_PROBLEMS}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error('네트워크 응답에 문제가 있음');
-    }
-
-    return res.json();
-  } catch (err) {
-    console.error('오류 :', err);
-  }
+  return apiFetch<Step2ProblemsResponse>(END_POINT.GET_STEP2_PROBLEMS);
 };

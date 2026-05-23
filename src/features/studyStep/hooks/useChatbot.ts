@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { postUserChat } from '@/features/studyStep/api/postUserChat.ts';
+import { postAgentChat } from '@/features/studyStep/api/postAgentChat.ts';
+import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 
 interface ChatMessage {
   role: 'user' | 'bot';
@@ -7,7 +8,9 @@ interface ChatMessage {
 }
 
 export const useChatbot = () => {
+  const { user } = useAuth();
   const [message, setMessage] = useState('');
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'bot',
@@ -17,6 +20,17 @@ export const useChatbot = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSendMessage = async () => {
+    if (!user) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'bot',
+          text: '로그인하면 이로가 학습 기록을 보고 더 잘 도와줄 수 있어!',
+        },
+      ]);
+      return;
+    }
+
     if (message.trim() === '') {
       alert('전송할 메세지 입력해주세요.');
       return;
@@ -27,16 +41,22 @@ export const useChatbot = () => {
       setMessage('');
       setLoading(true);
 
-      const result = await postUserChat({ message });
-      if (result?.response) {
-        setMessages(prev => [...prev, { role: 'bot', text: result.response }]);
-      }
+      const result = await postAgentChat({ sessionId, message });
+      setSessionId(result.session_id);
+      setMessages(prev => [...prev, { role: 'bot', text: result.response }]);
     } catch (err) {
       console.error(err);
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'bot',
+          text: '지금은 답변을 가져오지 못했어. 잠시 후 다시 물어봐줘!',
+        },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
-  return { message, setMessage, handleSendMessage, messages, loading };
+  return { message, setMessage, handleSendMessage, messages, loading, isLoggedIn: Boolean(user) };
 };

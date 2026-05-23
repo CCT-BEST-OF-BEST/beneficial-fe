@@ -18,6 +18,7 @@ export function StepProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useStep() {
   const context = useContext(StepContext);
   if (!context) {

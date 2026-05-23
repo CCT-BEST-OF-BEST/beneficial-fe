@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/utils.ts';
 
-export type BadgeType = '첫학습' | '복습' | '재도전' | '잠시후복습' | '훌륭해요!';
+export type BadgeType = '첫학습' | '복습' | '재도전' | '잠시후복습' | '훌륭해요';
 
 interface BadgeProps {
   type: BadgeType;
@@ -11,7 +11,7 @@ const typeToColor: Record<BadgeProps['type'], string> = {
   '복습': 'bg-[#9DD4F0]',
   '재도전': 'bg-[#FABF64]',
   '잠시후복습': 'bg-[#FABF64]',
-  '훌륭해요!': 'bg-[#9DD4F0]',
+  '훌륭해요': 'bg-[#9DD4F0]',
 };
 
 export default function Badge({ type }: BadgeProps) {

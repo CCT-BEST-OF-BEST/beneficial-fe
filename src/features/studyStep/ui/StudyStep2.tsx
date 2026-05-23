@@ -33,6 +33,7 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
     activeCard,
     isAllCorrect,
     isAllAnswered,
+    checking,
     handleDragStart,
     handleDragEnd,
     handleRemoveCard,
@@ -72,10 +73,10 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
         <Button
           step={2}
           className="typography-SB3 bottom-30 right-35 absolute w-[130px] py-1.5"
-          disabled={!isAllAnswered}
+          disabled={!isAllAnswered || checking}
           onClick={handleCheckAnswers}
         >
-          정답 확인하기
+          {checking ? '확인 중' : '정답 확인하기'}
         </Button>
       ) : (
         <div className="bottom-30 right-35 absolute flex h-[200px] w-[200px] items-center justify-center">

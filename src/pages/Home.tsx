@@ -1,19 +1,39 @@
 import { Link } from 'react-router-dom';
-import AirplaneImg from "@/assets/AirplaneImg.svg?react"
-import CharacterImg from "@/assets/CharacterImg.svg?react"
+import AirplaneImg from '@/assets/AirplaneImg.svg?react';
+import CharacterImg from '@/assets/CharacterImg.svg?react';
+import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 
 export default function Home() {
+  const { user, logout } = useAuth();
+
   return (
     <>
       <section className="mb-16">
+        <div className="mb-6 flex items-center justify-between">
         <h2 className="typography-SB5 mb-6 inline-block rounded-full bg-white px-5 py-3 text-[#8B8B8B]">
-          <span className="] font-bold">3학년 성지훈</span>{' '}
+          <span className="font-bold">{user?.display_name ?? '방문 학생'}</span>{' '}
           <span className="font-light">| 소담 다함께 돌봄센터</span>
         </h2>
+          {user ? (
+            <button
+              onClick={logout}
+              className="typography-SB3 text-orange-primary border-orange-primary rounded-full border-2 bg-white px-5 py-2"
+            >
+              로그아웃
+            </button>
+          ) : (
+            <Link
+              to="/auth/login"
+              className="typography-SB3 text-orange-primary border-orange-primary rounded-full border-2 bg-white px-5 py-2"
+            >
+              로그인
+            </Link>
+          )}
+        </div>
         <div className="font-one-mobile-pop relative w-full  text-center text-[60px]">
           <div
             aria-hidden
-            className="absolute left-0 top-0 z-0 text-white w-full"
+            className="absolute left-0 top-0 z-0 w-full text-white"
             style={{
               WebkitTextStroke: '8px white',
             }}
@@ -25,10 +45,13 @@ export default function Home() {
       </section>
 
       <section className="gap-y-7.5 grid flex-1 grid-cols-[55%_44%] grid-rows-2 gap-x-10">
-        <Link to={'/study'} className="overflow-hidden relative row-span-2 flex flex-col rounded-xl bg-[#FFB14E] px-7 py-6">
-          <AirplaneImg className="absolute -left-7 top-0 w-full"/>
-          <CharacterImg className="absolute right-0 bottom-13 z-0" />
-          <div className="mb-5 ml-5 mt-auto text-left relative z-10">
+        <Link
+          to={'/study'}
+          className="relative row-span-2 flex flex-col overflow-hidden rounded-xl bg-[#FFB14E] px-7 py-6"
+        >
+          <AirplaneImg className="absolute -left-7 top-0 w-full" />
+          <CharacterImg className="bottom-13 absolute right-0 z-0" />
+          <div className="relative z-10 mb-5 ml-5 mt-auto text-left">
             <h3 className="typography-SB4 mb-1 text-white">메인학습</h3>
             <p className="typography-R5 text-white">오늘 배울 내용, 같이 보러 가볼까요?</p>
           </div>

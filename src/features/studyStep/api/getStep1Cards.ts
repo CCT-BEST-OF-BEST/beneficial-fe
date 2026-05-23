@@ -1,22 +1,21 @@
 import { END_POINT } from '@/shared/constant/apis.ts';
+import { apiFetch } from '@/shared/api/client.ts';
+
+interface Step1CardPair {
+  pair_id: string;
+  word1: string;
+  word2: string;
+  order: number;
+  card1: { card_id: string; front_image: string; back_image: string };
+  card2: { card_id: string; front_image: string; back_image: string };
+}
+
+interface Step1CardsResponse {
+  success: boolean;
+  total_pairs: number;
+  card_pairs: Step1CardPair[];
+}
 
 export const getStep1Cards = async () => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-  try {
-    const res = await fetch(`${baseUrl}${END_POINT.GET_STEP1_CARDS}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error('네트워크 응답에 문제가 있음');
-    }
-
-    return res.json();
-  } catch (err) {
-    console.error('오류 :', err);
-  }
+  return apiFetch<Step1CardsResponse>(END_POINT.GET_STEP1_CARDS);
 };

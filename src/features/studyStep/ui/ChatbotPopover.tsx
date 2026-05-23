@@ -3,9 +3,10 @@ import Logo from '@/assets/Logo.png';
 import ChatSendIcon from '@/assets/ChatSendIcon.svg?react';
 import { useChatbot } from '@/features/studyStep/hooks/useChatbot.ts';
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function ChatbotPopover() {
-  const { messages, message, loading, setMessage, handleSendMessage } = useChatbot();
+  const { messages, message, loading, isLoggedIn, setMessage, handleSendMessage } = useChatbot();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -75,15 +76,26 @@ export default function ChatbotPopover() {
                   handleSendMessage();
                 }
               }}
+              disabled={!isLoggedIn}
+              placeholder={isLoggedIn ? '' : '로그인 후 이용할 수 있어요'}
               className="typography-R2 text-gray-5 border-gray-2 focus:border-orange-primary flex-1 rounded-lg border px-5 py-2 focus:outline-none"
             />
-            <button
-              onClick={handleSendMessage}
-              disabled={message.trim() === ''}
-              className="text-orange-primary border-orange-primary disabled:text-gray-2 disabled:border-gray-2 rounded-lg border bg-white p-2 focus:outline-none"
-            >
-              <ChatSendIcon />
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={handleSendMessage}
+                disabled={message.trim() === ''}
+                className="text-orange-primary border-orange-primary disabled:text-gray-2 disabled:border-gray-2 rounded-lg border bg-white p-2 focus:outline-none"
+              >
+                <ChatSendIcon />
+              </button>
+            ) : (
+              <Link
+                to="/auth/login"
+                className="text-orange-primary border-orange-primary typography-SB6 rounded-lg border bg-white px-3 py-2 focus:outline-none"
+              >
+                로그인
+              </Link>
+            )}
           </div>
         </Popover.Content>
       </Popover.Portal>

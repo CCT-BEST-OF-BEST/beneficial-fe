@@ -5,6 +5,7 @@ import Home from '@/pages/Home.tsx';
 import Study from '@/pages/Study.tsx';
 import StudyDetail from '@/pages/StudyDetail.tsx';
 import NotFoundPage from '@/shared/ui/NotFoundPage.tsx';
+import AuthPage from '@/pages/AuthPage.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
+      { path: '/auth/:mode', element: <AuthPage /> },
       { path: '/study', element: <Study /> },
       { path: '/study/:studyId', element: <StudyDetail /> },
       { path: '*', element: <NotFoundPage /> },
