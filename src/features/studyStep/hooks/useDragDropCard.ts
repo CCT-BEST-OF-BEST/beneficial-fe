@@ -15,10 +15,16 @@ interface ProblemsData {
   answer_options: string[];
 }
 
+export interface AnswerCard {
+  id: string;
+  value: string;
+}
+
 export const useDragDropCard = () => {
   const [problems, setProblems] = useState<ProblemsData | null>(null);
-  const [droppedCards, setDroppedCards] = useState<Record<number, string | null>>({});
-  const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [answerCards, setAnswerCards] = useState<AnswerCard[]>([]);
+  const [droppedCards, setDroppedCards] = useState<Record<number, AnswerCard | null>>({});
+  const [activeCard, setActiveCard] = useState<AnswerCard | null>(null);
   const [isAllCorrect, setIsAllCorrect] = useState(false);
   const [checking, setChecking] = useState(false);
 
@@ -27,6 +33,9 @@ export const useDragDropCard = () => {
       try {
         const data = await getStep2Problems();
         setProblems(data);
+        setAnswerCards(
+          data.answer_options.map((answer, index) => ({ id: `answer-${index}`, value: answer }))
+        );
       } catch (err) {
         console.error(err);
       }
@@ -36,7 +45,9 @@ export const useDragDropCard = () => {
   }, []);
 
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveCard(event.active.id as string);
+    const cardId = event.active.id as string;
+    const card = answerCards.find(answerCard => answerCard.id === cardId);
+    if (card) setActiveCard(card);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -44,21 +55,32 @@ export const useDragDropCard = () => {
     if (over) {
       const sentenceId = parseInt(over.id.toString().replace('blank-', ''));
       const cardId = active.id as string;
-      setDroppedCards(prev => ({ ...prev, [sentenceId]: cardId }));
+      const card = answerCards.find(answerCard => answerCard.id === cardId);
+
+      if (card) {
+        setDroppedCards(prev => {
+          const next = { ...prev };
+
+          Object.entries(next).forEach(([problemId, droppedCard]) => {
+            if (droppedCard?.id === card.id) {
+              delete next[Number(problemId)];
+            }
+          });
+
+          next[sentenceId] = card;
+          return next;
+        });
+      }
     }
     setActiveCard(null);
   };
 
-  const handleRemoveCard = (sentenceId: number, cardId: string | null) => {
-    if (cardId === null) {
-      setDroppedCards(prev => {
-        const newState = { ...prev };
-        delete newState[sentenceId];
-        return newState;
-      });
-    } else {
-      setDroppedCards(prev => ({ ...prev, [sentenceId]: cardId }));
-    }
+  const handleRemoveCard = (sentenceId: number) => {
+    setDroppedCards(prev => {
+      const newState = { ...prev };
+      delete newState[sentenceId];
+      return newState;
+    });
   };
 
   const handleCheckAnswers = async () => {
@@ -71,17 +93,19 @@ export const useDragDropCard = () => {
         problems.problems.map(problem =>
           postStep2Answer({
             problemId: problem.problem_id,
-            answer: droppedCards[problem.problem_id] ?? '',
+            answer: droppedCards[problem.problem_id]?.value ?? '',
           })
         )
       );
 
-      const correctedCards: Record<number, string | null> = {};
+      const correctedCards: Record<number, AnswerCard | null> = {};
       let correctCount = 0;
 
       results.forEach(result => {
+        const submittedCard = droppedCards[result.problem_id];
+
         if (result.is_correct) {
-          correctedCards[result.problem_id] = result.user_answer;
+          correctedCards[result.problem_id] = submittedCard;
           correctCount++;
         }
       });
@@ -105,8 +129,16 @@ export const useDragDropCard = () => {
         droppedCards[problem.problem_id] !== undefined && droppedCards[problem.problem_id] !== null
     ) ?? false;
 
+  const droppedCardIds = new Set(
+    Object.values(droppedCards)
+      .filter((card): card is AnswerCard => Boolean(card))
+      .map(card => card.id)
+  );
+  const availableCards = answerCards.filter(card => !droppedCardIds.has(card.id));
+
   return {
     problems,
+    availableCards,
     droppedCards,
     activeCard,
     isAllCorrect,

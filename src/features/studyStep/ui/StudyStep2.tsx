@@ -3,9 +3,11 @@ import { useDragDropCard } from '@/features/studyStep/hooks/useDragDropCard.ts';
 import Button from '@/shared/ui/Button.tsx';
 import { cn } from '@/shared/lib/utils.ts';
 import Stamp from '@/assets/Stamp.png';
+import type { AnswerCard } from '@/features/studyStep/hooks/useDragDropCard.ts';
 
 interface CardProps {
   id: string;
+  label: string;
   children: React.ReactNode;
   disabled?: boolean;
 }
@@ -14,8 +16,8 @@ interface SentenceProps {
   id: number;
   part1: string;
   part2: string;
-  droppedCard: string | null;
-  onDropCard: (sentenceId: number, cardId: string | null) => void;
+  droppedCard: AnswerCard | null;
+  onRemoveCard: (sentenceId: number) => void;
   disabled?: boolean;
 }
 
@@ -29,6 +31,7 @@ interface Problem {
 export default function StudyStep2({ handleStepClick }: { handleStepClick: () => void }) {
   const {
     problems,
+    availableCards,
     droppedCards,
     activeCard,
     isAllCorrect,
@@ -48,9 +51,9 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
       </div>
 
       <div className="p-4.5 gap-y-4.5 mb-7 flex flex-wrap gap-x-10 rounded-sm bg-[#F9F9F9]">
-        {problems?.answer_options?.map((answer: string, idx: number) => (
-          <DraggableCard key={idx} id={answer} disabled={isAllCorrect}>
-            {answer}
+        {availableCards.map(card => (
+          <DraggableCard key={card.id} id={card.id} label={card.value} disabled={isAllCorrect}>
+            {card.value}
           </DraggableCard>
         ))}
       </div>
@@ -63,7 +66,7 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
             part1={problem.sentence_part1}
             part2={problem.sentence_part2}
             droppedCard={droppedCards[problem.problem_id] ?? null}
-            onDropCard={handleRemoveCard}
+            onRemoveCard={handleRemoveCard}
             disabled={isAllCorrect}
           />
         ))}
@@ -96,7 +99,7 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
       <DragOverlay>
         {activeCard ? (
           <div className="border-green-primary typography-SB1 min-w-[140px] cursor-pointer rounded-lg border-2 bg-white py-2.5 text-center">
-            {activeCard}
+            {activeCard.value}
           </div>
         ) : null}
       </DragOverlay>
@@ -104,10 +107,13 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
   );
 }
 
-function DraggableCard({ id, children, disabled = false }: CardProps) {
+function DraggableCard({ id, label, children, disabled = false }: CardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id,
     disabled,
+    data: {
+      label,
+    },
   });
 
   const style = {
@@ -131,7 +137,7 @@ function DraggableCard({ id, children, disabled = false }: CardProps) {
   );
 }
 
-function Sentence({ id, part1, part2, droppedCard, onDropCard, disabled = false }: SentenceProps) {
+function Sentence({ id, part1, part2, droppedCard, onRemoveCard, disabled = false }: SentenceProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: `blank-${id}`,
     disabled,
@@ -142,7 +148,7 @@ function Sentence({ id, part1, part2, droppedCard, onDropCard, disabled = false 
 
   const handleRemoveCard = () => {
     if (droppedCard && !disabled) {
-      onDropCard(id, null);
+      onRemoveCard(id);
     }
   };
 
@@ -162,7 +168,7 @@ function Sentence({ id, part1, part2, droppedCard, onDropCard, disabled = false 
         )}
         onClick={droppedCard && !disabled ? handleRemoveCard : undefined}
       >
-        {droppedCard ?? <span className="text-[#D9D9D9]">?</span>}
+        {droppedCard?.value ?? <span className="text-[#D9D9D9]">?</span>}
       </div>
       <span className="typography-M1">{part2}</span>
     </li>
