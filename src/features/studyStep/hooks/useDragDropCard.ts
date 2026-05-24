@@ -102,8 +102,9 @@ export const useDragDropCard = () => {
 
       results.forEach(result => {
         const submittedCard = droppedCards[result.problem_id];
+        const isPassed = result.is_correct || result.is_admin;
 
-        if (result.is_correct) {
+        if (isPassed) {
           correctedCards[result.problem_id] = submittedCard;
           correctCount++;
         }

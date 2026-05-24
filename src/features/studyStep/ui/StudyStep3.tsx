@@ -155,7 +155,7 @@ export default function StudyStep3() {
 
       {/* 오답 후 AI 설명 버튼 */}
       {isAnswered && isCorrect === false && user && (
-        <div className="mx-auto w-3/4">
+        <div className="mx-auto mb-2 w-3/4">
           {!aiExplanation && !isLoadingAI && (
             <button
               onClick={handleAskAI}

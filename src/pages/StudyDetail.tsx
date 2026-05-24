@@ -66,7 +66,7 @@ export default function StudyDetail() {
         </div>
       </section>
 
-      <section className="flex-1 rounded-2xl bg-white px-11 pt-10">
+      <section className="flex-1 rounded-2xl bg-white px-11 pt-10 pb-12">
         {currentStep === 1 && <StudyStep1 handleStepClick={handleStepClick} />}
         {currentStep === 2 && <StudyStep2 handleStepClick={handleStepClick} />}
         {currentStep === 3 && <StudyStep3 />}

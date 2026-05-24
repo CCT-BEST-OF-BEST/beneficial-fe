@@ -13,6 +13,7 @@ export interface Step2AnswerResponse {
   correct_answer: string;
   full_sentence: string;
   concept_key: string;
+  is_admin: boolean;
 }
 
 export const postStep2Answer = async ({ problemId, answer }: PostStep2AnswerProps) => {
