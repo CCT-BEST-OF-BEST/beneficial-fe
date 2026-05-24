@@ -4,6 +4,33 @@ import ChatSendIcon from '@/assets/ChatSendIcon.svg?react';
 import { useChatbot } from '@/features/studyStep/hooks/useChatbot.ts';
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import type { AgentAction } from '@/features/studyStep/api/postAgentChat.ts';
+
+const agentActionMeta: Record<
+  AgentAction,
+  { label: string; bubbleClass: string }
+> = {
+  proactive_hint: {
+    label: '💡 약점 힌트',
+    bubbleClass: 'border-orange-primary bg-[#FFF3D8] text-gray-4',
+  },
+  encourage: {
+    label: '🌟 잘하고 있어요',
+    bubbleClass: 'border-sky-primary bg-[#EEF8FF] text-gray-4',
+  },
+  ask_followup: {
+    label: '❓ 이로의 질문',
+    bubbleClass: 'border-gray-2 bg-[#F9F9F9] text-gray-4',
+  },
+  answer_with_rag: {
+    label: '',
+    bubbleClass: 'border-orange-primary bg-[#FFF8E5] text-gray-4',
+  },
+  small_talk: {
+    label: '',
+    bubbleClass: 'border-orange-primary bg-[#FFF8E5] text-gray-4',
+  },
+};
 
 export default function ChatbotPopover() {
   const {
@@ -12,8 +39,10 @@ export default function ChatbotPopover() {
     loading,
     weakConcepts,
     isLoggedIn,
+    hasSession,
     setMessage,
     handleSendMessage,
+    handleClearSession,
   } = useChatbot();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -37,7 +66,23 @@ export default function ChatbotPopover() {
           sideOffset={16}
           className="z-50 h-[500px] w-[400px] rounded-xl bg-white p-6 shadow-lg"
         >
-          <div className="h-[400px] space-y-4 overflow-auto whitespace-pre-line">
+          {/* 헤더 */}
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <img src={Logo} className="h-[16px] w-[24px]" alt="이로" />
+              <span className="typography-SB6 text-orange-primary">이로</span>
+            </div>
+            {isLoggedIn && hasSession && (
+              <button
+                onClick={handleClearSession}
+                className="typography-R1 text-gray-3 hover:text-gray-5 underline"
+              >
+                대화 초기화
+              </button>
+            )}
+          </div>
+
+          <div className="h-[360px] space-y-4 overflow-auto whitespace-pre-line">
             {isLoggedIn && weakConcepts.length > 0 && (
               <div className="border-gray-1 rounded-xl border bg-[#FFFDF7] px-4 py-3">
                 <p className="typography-M4 text-gray-3 mb-2">헷갈리는 맞춤법</p>
@@ -54,35 +99,49 @@ export default function ChatbotPopover() {
               </div>
             )}
 
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start gap-3'}`}
-              >
-                {msg.role === 'bot' && (
-                  <div className="flex h-9 w-9 items-center justify-center">
-                    <img src={Logo} alt="Bot" className="h-[16px] w-[24px]" />
-                  </div>
-                )}
+            {messages.map((msg, idx) => {
+              const meta =
+                msg.role === 'bot' && msg.agentAction
+                  ? agentActionMeta[msg.agentAction]
+                  : null;
+              const bubbleClass =
+                msg.role === 'bot'
+                  ? (meta?.bubbleClass ?? 'border-orange-primary bg-[#FFF8E5] text-gray-4')
+                  : 'border-gray-2 text-gray-5 bg-white rounded-tr-none';
+
+              return (
                 <div
-                  className={`max-w-[70%] rounded-3xl px-5 py-4 ${
-                    msg.role === 'user'
-                      ? 'border-gray-2 text-gray-5 typography-R2 rounded-tr-none border bg-white'
-                      : 'border-orange-primary text-gray-4 typography-R2 rounded-tl-none border bg-[#FFF8E5]'
-                  }`}
+                  key={idx}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start gap-3'}`}
                 >
-                  {msg.text}
+                  {msg.role === 'bot' && (
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center">
+                      <img src={Logo} alt="Bot" className="h-[16px] w-[24px]" />
+                    </div>
+                  )}
+                  <div className="flex max-w-[70%] flex-col gap-1">
+                    {msg.role === 'bot' && meta?.label && (
+                      <span className="typography-R1 text-orange-primary">{meta.label}</span>
+                    )}
+                    <div
+                      className={`typography-R2 rounded-3xl border px-5 py-4 ${bubbleClass} ${
+                        msg.role === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none'
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {loading && (
               <div className="flex justify-start gap-3">
-                <div className="flex h-9 w-9 items-center justify-center">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center">
                   <img src={Logo} alt="Bot" className="h-[16px] w-[24px]" />
                 </div>
                 <div className="border-orange-primary text-gray-4 typography-R2 max-w-[70%] rounded-3xl rounded-tl-none border bg-[#FFF8E5] px-5 py-4">
-                  답변을 작성 중이에요...
+                  <span className="animate-pulse">답변을 작성 중이에요...</span>
                 </div>
               </div>
             )}
@@ -101,7 +160,7 @@ export default function ChatbotPopover() {
                 }
               }}
               disabled={!isLoggedIn}
-              placeholder={isLoggedIn ? '' : '로그인 후 이용할 수 있어요'}
+              placeholder={isLoggedIn ? '이로에게 질문해봐요!' : '로그인 후 이용할 수 있어요'}
               className="typography-R2 text-gray-5 border-gray-2 focus:border-orange-primary flex-1 rounded-lg border px-5 py-2 focus:outline-none"
             />
             {isLoggedIn ? (

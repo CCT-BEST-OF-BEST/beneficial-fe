@@ -55,7 +55,10 @@ export default function Home() {
             바로가기
           </h4>
         </button>
-        <button className="row-span-1 flex-col justify-between rounded-xl bg-[#FFE670] px-7 py-6">
+        <Link
+          to={'/records'}
+          className="row-span-1 flex-col justify-between rounded-xl bg-[#FFE670] px-7 py-6"
+        >
           <div className="text-left">
             <h3 className="typography-SB4 mb-1 text-white">맞춤법 카드 책장</h3>
             <p className="typography-R5 text-white">학습한 맞춤법을 카드로 모아 내 책장으로!</p>
@@ -63,7 +66,7 @@ export default function Home() {
           <h4 className="typography-SB3 ml-auto w-[126px] rounded-full bg-white py-3 text-center text-[#FFCE1F]">
             바로가기
           </h4>
-        </button>
+        </Link>
       </section>
     </>
   );

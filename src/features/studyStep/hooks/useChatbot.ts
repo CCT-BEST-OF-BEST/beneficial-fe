@@ -1,23 +1,27 @@
 import { useEffect, useState } from 'react';
 import { postAgentChat } from '@/features/studyStep/api/postAgentChat.ts';
+import type { AgentAction } from '@/features/studyStep/api/postAgentChat.ts';
+import { deleteAgentSession } from '@/features/studyStep/api/deleteAgentSession.ts';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 import { getAgentProfile } from '@/features/studyStep/api/getAgentProfile.ts';
+
+const INITIAL_MESSAGE = {
+  role: 'bot' as const,
+  text: '안녕~ 나는 "이로"야! \n궁금한 게 생겨서 나 찾은 거 맞지? \n무슨 질문이든 언제든지, 이로가 척척 알려줄게!',
+  agentAction: undefined as AgentAction | undefined,
+};
 
 interface ChatMessage {
   role: 'user' | 'bot';
   text: string;
+  agentAction?: AgentAction;
 }
 
 export const useChatbot = () => {
   const { user } = useAuth();
   const [message, setMessage] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: 'bot',
-      text: '안녕~ 나는 “이로”야! \n궁금한 게 생겨서 나 찾은 거 맞지? \n무슨 질문이든 언제든지, 이로가 척척 알려줄게!',
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
   const [loading, setLoading] = useState(false);
   const [weakConcepts, setWeakConcepts] = useState<string[]>([]);
 
@@ -66,7 +70,10 @@ export const useChatbot = () => {
       if (result.weak_concepts.length > 0) {
         setWeakConcepts(result.weak_concepts);
       }
-      setMessages(prev => [...prev, { role: 'bot', text: result.response }]);
+      setMessages(prev => [
+        ...prev,
+        { role: 'bot', text: result.response, agentAction: result.agent_action },
+      ]);
     } catch (err) {
       console.error(err);
       setMessages(prev => [
@@ -81,13 +88,27 @@ export const useChatbot = () => {
     }
   };
 
+  const handleClearSession = async () => {
+    if (sessionId) {
+      try {
+        await deleteAgentSession(sessionId);
+      } catch {
+        // 삭제 실패해도 로컬 초기화는 진행
+      }
+    }
+    setSessionId(null);
+    setMessages([INITIAL_MESSAGE]);
+  };
+
   return {
     message,
     setMessage,
     handleSendMessage,
+    handleClearSession,
     messages,
     loading,
     weakConcepts,
     isLoggedIn: Boolean(user),
+    hasSession: Boolean(sessionId),
   };
 };
