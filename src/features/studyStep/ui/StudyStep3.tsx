@@ -13,7 +13,7 @@ import type { Step3Problem } from '@/features/studyStep/api/getStep3NextProblem.
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 import { postAgentChat } from '@/features/studyStep/api/postAgentChat.ts';
 import Logo from '@/assets/Logo.png';
-import { Link } from 'react-router-dom';
+import { useAuthenticatedImage } from '@/shared/api/useAuthenticatedImage.ts';
 
 export default function StudyStep3() {
   const { user } = useAuth();
@@ -30,6 +30,7 @@ export default function StudyStep3() {
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [aiSessionId, setAiSessionId] = useState<string | null>(null);
+  const { src: problemImageSrc } = useAuthenticatedImage(problem?.image);
 
   const fetchProblem = async () => {
     try {
@@ -108,24 +109,6 @@ export default function StudyStep3() {
 
   return (
     <>
-      {/* 비로그인 안내 배너 */}
-      {!user && (
-        <div className="mb-4 flex items-center justify-between rounded-xl bg-[#FFF8E5] px-5 py-3">
-          <div className="flex items-center gap-2">
-            <img src={Logo} alt="이로" className="h-[16px] w-[24px]" />
-            <p className="typography-M3 text-orange-primary">
-              로그인하면 내 진행도가 저장되고 AI 설명도 들을 수 있어요!
-            </p>
-          </div>
-          <Link
-            to="/auth/login"
-            className="typography-SB6 text-orange-primary border-orange-primary ml-4 shrink-0 rounded-full border px-4 py-1"
-          >
-            로그인
-          </Link>
-        </div>
-      )}
-
       <div className="gap-8.5 flex items-center">
         <div className="relative h-4 w-full flex-1 rounded-full bg-[#FFEDED]">
           <div
@@ -138,9 +121,7 @@ export default function StudyStep3() {
       <Badge type={badge} />
 
       <div className="mx-auto flex h-[190px] w-[228px] items-center justify-center">
-        {problem && (
-          <img src={`${import.meta.env.VITE_API_BASE_URL}/learning/images/${problem.image}`} />
-        )}
+        {problemImageSrc && <img src={problemImageSrc} alt="" />}
       </div>
 
       <div className="flex items-center justify-center gap-4">

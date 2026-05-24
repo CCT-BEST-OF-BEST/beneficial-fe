@@ -2,6 +2,7 @@ import { useFlipCard } from '@/features/studyStep/hooks/useFlipCard.ts';
 import ArrowIcon from '@/assets/ArrowIcon.svg?react';
 import Button from '@/shared/ui/Button.tsx';
 import { cn } from '@/shared/lib/utils.ts';
+import { useAuthenticatedImage } from '@/shared/api/useAuthenticatedImage.ts';
 
 interface FlipCardProps {
   front: string;
@@ -125,6 +126,9 @@ function ChoiceButton({ word, selectedWord, checking, isCorrect, onClick }: Choi
 }
 
 function FlipCard({ front, back, flipped, onFlip }: FlipCardProps) {
+  const { src: frontSrc } = useAuthenticatedImage(front);
+  const { src: backSrc } = useAuthenticatedImage(back);
+
   return (
     <div className="h-[360px] w-[248px] cursor-pointer [perspective:1000px]" onClick={onFlip}>
       <div
@@ -132,16 +136,24 @@ function FlipCard({ front, back, flipped, onFlip }: FlipCardProps) {
           flipped ? '[transform:rotateY(180deg)]' : ''
         }`}
       >
-        <img
-          src={front}
-          alt="front"
-          className="absolute h-full w-full rounded-md [backface-visibility:hidden]"
-        />
-        <img
-          src={back}
-          alt="back"
-          className="absolute h-full w-full rounded-md [backface-visibility:hidden] [transform:rotateY(180deg)]"
-        />
+        {frontSrc ? (
+          <img
+            src={frontSrc}
+            alt="front"
+            className="absolute h-full w-full rounded-md [backface-visibility:hidden]"
+          />
+        ) : (
+          <div className="absolute h-full w-full rounded-md bg-gray-1 [backface-visibility:hidden]" />
+        )}
+        {backSrc ? (
+          <img
+            src={backSrc}
+            alt="back"
+            className="absolute h-full w-full rounded-md [backface-visibility:hidden] [transform:rotateY(180deg)]"
+          />
+        ) : (
+          <div className="absolute h-full w-full rounded-md bg-gray-1 [backface-visibility:hidden] [transform:rotateY(180deg)]" />
+        )}
       </div>
     </div>
   );

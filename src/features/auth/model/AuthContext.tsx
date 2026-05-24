@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { apiFetch } from '@/shared/api/client.ts';
+import { AUTH_UNAUTHORIZED_EVENT, apiFetch } from '@/shared/api/client.ts';
 import { clearAccessToken, getAccessToken, setAccessToken } from '@/shared/api/token.ts';
 
 export interface User {
@@ -64,6 +64,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     restoreSession();
+  }, []);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      setUser(null);
+    };
+
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    return () => window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
   }, []);
 
   const login = async (email: string, password: string) => {

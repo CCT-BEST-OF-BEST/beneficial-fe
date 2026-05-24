@@ -5,11 +5,6 @@ import {
   type Step1CardCheckResponse,
 } from '@/features/studyStep/api/postStep1CardCheck.ts';
 
-const getImageUrl = (path: string) => {
-  const filename = path.split('/').pop();
-  return `${import.meta.env.VITE_API_BASE_URL}/learning/images/${filename}`;
-};
-
 interface CardPair {
   pair_id: string;
   word1: string;
@@ -39,23 +34,8 @@ export const useFlipCard = () => {
         const data = await getStep1Cards();
         if (!data) return;
 
-        const transformedPairs = data.card_pairs.map((pair: CardPair) => ({
-          ...pair,
-          card1: {
-            ...pair.card1,
-            front_image: getImageUrl(pair.card1.front_image),
-            back_image: getImageUrl(pair.card1.back_image),
-          },
-          card2: {
-            ...pair.card2,
-            front_image: getImageUrl(pair.card2.front_image),
-            back_image: getImageUrl(pair.card2.back_image),
-          },
-        }));
-
         setCards({
           ...data,
-          card_pairs: transformedPairs,
         });
       } catch (error) {
         console.error(error);

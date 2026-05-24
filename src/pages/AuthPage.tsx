@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Button from '@/shared/ui/Button.tsx';
 import Logo from '@/assets/Logo.png';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
@@ -9,6 +9,7 @@ import { ApiError } from '@/shared/api/client.ts';
 export default function AuthPage() {
   const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const mode = params.mode === 'signup' ? 'signup' : 'login';
   const { user, loading, login, signup } = useAuth();
   const [email, setEmail] = useState('');
@@ -18,6 +19,19 @@ export default function AuthPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const isSignup = mode === 'signup';
+  const redirectTo = useMemo(() => {
+    const state = location.state as
+      | { from?: { pathname?: string; search?: string; hash?: string } }
+      | null;
+    const from = state?.from;
+
+    if (!from?.pathname || from.pathname.startsWith('/auth')) {
+      return '/study';
+    }
+
+    return `${from.pathname}${from.search ?? ''}${from.hash ?? ''}`;
+  }, [location.state]);
+
   const canSubmit = useMemo(() => {
     if (!email.trim() || !password.trim()) return false;
     if (isSignup && !displayName.trim()) return false;
@@ -42,7 +56,7 @@ export default function AuthPage() {
         await login(email, password);
       }
 
-      navigate('/study');
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       if (error instanceof ApiError && typeof error.detail === 'string') {
         setErrorMessage(error.detail);
@@ -55,7 +69,7 @@ export default function AuthPage() {
   };
 
   if (!loading && user) {
-    return <Navigate to="/study" replace />;
+    return <Navigate to={redirectTo} replace />;
   }
 
   return (

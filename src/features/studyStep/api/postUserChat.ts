@@ -1,27 +1,21 @@
 import { END_POINT } from '@/shared/constant/apis.ts';
+import { apiFetch } from '@/shared/api/client.ts';
 
 interface postUserChatProps {
   message: string;
 }
 
+export interface UserChatResponse {
+  status: string;
+  prompt: string;
+  response: string;
+  collection_used: string;
+  top_k: number;
+}
+
 export const postUserChat = async ({ message }: postUserChatProps) => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-  try {
-    const res = await fetch(`${baseUrl}${END_POINT.POST_USER_CHAT}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt: message }),
-    });
-
-    if (!res.ok) {
-      throw new Error('네트워크 응답에 문제가 있음');
-    }
-
-    return res.json();
-  } catch (err) {
-    console.error('오류 :', err);
-  }
+  return apiFetch<UserChatResponse>(END_POINT.POST_USER_CHAT, {
+    method: 'POST',
+    body: JSON.stringify({ prompt: message }),
+  });
 };
