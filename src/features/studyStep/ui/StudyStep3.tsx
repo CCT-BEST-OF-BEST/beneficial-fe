@@ -20,6 +20,7 @@ export default function StudyStep3() {
   const [progress, setProgress] = useState(0);
   const [problem, setProblem] = useState<Step3Problem | null>(null);
   const [answer, setAnswer] = useState('');
+  const [userAnswer, setUserAnswer] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [badge, setBadge] = useState<BadgeType>('첫학습');
   const [isAnswered, setIsAnswered] = useState(false);
@@ -47,6 +48,7 @@ export default function StudyStep3() {
       setProblem(data.problem);
       setBadge(data.problem.badge ?? '첫학습');
       setAnswer('');
+      setUserAnswer('');
       setCorrectAnswer('');
       setIsAnswered(false);
       setIsCorrect(null);
@@ -74,6 +76,7 @@ export default function StudyStep3() {
         if (!result || !data) return;
 
         setCorrectAnswer(result.correct_answer);
+        setUserAnswer(result.user_answer);
         setIsCorrect(result.is_correct);
         if (result.badge) setBadge(result.badge);
         setAnswer(result.explanation);
@@ -95,7 +98,7 @@ export default function StudyStep3() {
     try {
       const result = await postAgentChat({
         sessionId: aiSessionId,
-        message: `"${problem.sentence_part1} [${correctAnswer}] ${problem.sentence_part2}" 에서 "${correctAnswer}"가 왜 맞는 표현인지 쉽게 설명해줘.`,
+        message: `"${problem.sentence_part1} [정답: ${correctAnswer}] ${problem.sentence_part2}" 문제에서 학생이 "${userAnswer}"라고 답했어. 학생이 적은 "${userAnswer}"가 왜 이 문장에 안 맞는지 짚어주고, 정답 "${correctAnswer}"가 왜 맞는지 쉽고 짧게(2~3문장) 설명해줘. 반말로.`,
       });
       setAiSessionId(result.session_id);
       setAiExplanation(result.response);
