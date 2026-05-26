@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getTeacherClasses, type ClassItem } from '@/features/classroom/api/teacherClassroom.ts';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getTeacherClasses, createTeacherClass, type ClassItem } from '@/features/classroom/api/teacherClassroom.ts';
 import { getTeacherAssignments, type Assignment } from '@/features/instruction/api/teacherInstruction.ts';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
 
 export default function TeacherDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [creating, setCreating] = useState(false);
+  const [newClassName, setNewClassName] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getTeacherClasses()
@@ -19,6 +24,25 @@ export default function TeacherDashboard() {
       .then(res => setAssignments(res.assignments || []))
       .catch(console.error);
   }, []);
+
+  const handleCreateClass = async () => {
+    const name = newClassName.trim();
+    if (!name) return;
+    setSubmitting(true);
+    try {
+      const created = await createTeacherClass(name);
+      setCreating(false);
+      setNewClassName('');
+      navigate(`/teacher/classes/${created.class_id}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCreateKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleCreateClass();
+    if (e.key === 'Escape') { setCreating(false); setNewClassName(''); }
+  };
 
   const draftAssignments = assignments.filter(a => a.status === 'draft');
   const activeAssignments = assignments.filter(a => a.status === 'assigned');
@@ -35,8 +59,43 @@ export default function TeacherDashboard() {
       <div className="grid grid-cols-2 gap-8">
         {/* 내 담당 반 */}
         <section>
-          <h2 className="typography-SB4 mb-4 text-gray-800">내 담당 반</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="typography-SB4 text-gray-800">내 담당 반</h2>
+            <button
+              onClick={() => { setCreating(true); setTimeout(() => inputRef.current?.focus(), 50); }}
+              className="typography-SB5 text-orange-primary hover:underline"
+            >
+              + 반 만들기
+            </button>
+          </div>
+
           <div className="flex flex-col gap-4">
+            {creating && (
+              <div className="rounded-2xl bg-white p-5 shadow-sm border border-orange-primary flex gap-3 items-center">
+                <input
+                  ref={inputRef}
+                  value={newClassName}
+                  onChange={e => setNewClassName(e.target.value)}
+                  onKeyDown={handleCreateKeyDown}
+                  placeholder="반 이름을 입력하세요 (예: 소담반)"
+                  className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 typography-R4 outline-none focus:border-orange-primary"
+                />
+                <button
+                  onClick={handleCreateClass}
+                  disabled={!newClassName.trim() || submitting}
+                  className="bg-orange-primary text-white px-5 py-2.5 rounded-xl typography-SB5 disabled:opacity-50 shrink-0"
+                >
+                  {submitting ? '생성 중...' : '만들기'}
+                </button>
+                <button
+                  onClick={() => { setCreating(false); setNewClassName(''); }}
+                  className="text-gray-400 hover:text-gray-600 px-2 shrink-0"
+                >
+                  취소
+                </button>
+              </div>
+            )}
+
             {classes.length > 0 ? (
               classes.map(cls => (
                 <Link
@@ -48,11 +107,11 @@ export default function TeacherDashboard() {
                   <p className="typography-R4 text-gray-500">학생 {cls.student_count}명</p>
                 </Link>
               ))
-            ) : (
+            ) : !creating ? (
               <div className="rounded-2xl bg-gray-50 p-8 text-center text-gray-400 typography-R4">
-                담당 반이 없습니다.
+                담당 반이 없습니다. 반을 만들어 학생을 등록해보세요.
               </div>
-            )}
+            ) : null}
           </div>
         </section>
 

@@ -3,6 +3,8 @@ import CloseIcon from '@/assets/CloseIcon.svg?react';
 import StudyDialogImage from '@/assets/StudyDialogImage.png';
 import { Link } from 'react-router-dom';
 
+const STEP_LABEL: Record<number, string> = { 1: '오늘의 맞춤법', 2: '예제 풀이', 3: '도전 맞춤법' };
+
 interface StudyDialogProps {
   lessonId: string;
   lessonOrder: number;
@@ -12,6 +14,9 @@ interface StudyDialogProps {
 }
 
 export default function StudyDialog({ lessonId, lessonOrder, lessonName, open, onOpenChange }: StudyDialogProps) {
+  const savedStep = parseInt(localStorage.getItem(`lesson_step_${lessonId}`) ?? '0', 10);
+  const isResume = savedStep >= 2;
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -33,11 +38,18 @@ export default function StudyDialog({ lessonId, lessonOrder, lessonName, open, o
             <div>
               <img src={StudyDialogImage} className="h-[290px] w-[290px]" alt="" />
             </div>
+
+            {isResume && (
+              <p className="typography-R5 text-gray-400 mt-6 text-center">
+                마지막 학습: <span className="text-orange-primary font-semibold">{STEP_LABEL[savedStep]}</span> 단계
+              </p>
+            )}
+
             <Link
               to={`/student/learning/${lessonId}`}
-              className="bg-orange-primary typography-SB2 mt-10 flex w-full justify-center rounded-full py-3 text-white"
+              className="bg-orange-primary typography-SB2 mt-4 flex w-full justify-center rounded-full py-3 text-white"
             >
-              학습하기
+              {isResume ? '이어하기' : '학습하기'}
             </Link>
           </div>
         </Dialog.Content>

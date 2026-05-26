@@ -26,9 +26,10 @@ const ICON_MAP: Record<string, any> = {
 
 interface StudyStep3Props {
   lessonId: string;
+  onComplete?: () => void;
 }
 
-export default function StudyStep3({ lessonId }: StudyStep3Props) {
+export default function StudyStep3({ lessonId, onComplete }: StudyStep3Props) {
   const { user } = useAuth();
   const [progress, setProgress] = useState(0);
   const [problem, setProblem] = useState<Step3Problem | null>(null);
@@ -50,6 +51,7 @@ export default function StudyStep3({ lessonId }: StudyStep3Props) {
       if (!data) return;
 
       if (data.is_completed) {
+        onComplete?.();
         setIsDialogOpen(true);
         return;
       }

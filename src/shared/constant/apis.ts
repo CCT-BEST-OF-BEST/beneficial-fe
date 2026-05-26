@@ -40,6 +40,7 @@ export const END_POINT = {
 
   // Teacher Classroom
   GET_TEACHER_CLASSES: `/teacher/classes`,
+  POST_TEACHER_CLASSES: `/teacher/classes`,
   GET_TEACHER_CLASS_STUDENTS: (classId: string) => `/teacher/classes/${classId}/students`,
   POST_TEACHER_CLASS_STUDENT: (classId: string) => `/teacher/classes/${classId}/students`,
   DELETE_TEACHER_CLASS_STUDENT: (classId: string, studentId: string) => `/teacher/classes/${classId}/students/${studentId}`,

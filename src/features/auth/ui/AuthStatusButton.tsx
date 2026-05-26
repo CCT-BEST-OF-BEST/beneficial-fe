@@ -11,7 +11,7 @@ export default function AuthStatusButton({ showName = false, className }: AuthSt
   const { user, logout } = useAuth();
 
   const baseClass = cn(
-    'typography-SB3 text-orange-primary border-orange-primary rounded-full border-2 bg-white px-5 py-2',
+    'typography-SB3 text-orange-primary border-orange-primary rounded-full border-2 bg-white px-6 py-3',
     className
   );
 

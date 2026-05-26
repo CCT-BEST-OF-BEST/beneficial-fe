@@ -1,14 +1,15 @@
 import { apiFetch } from '@/shared/api/client.ts';
 import { END_POINT } from '@/shared/constant/apis.ts';
 
+export interface CollectionInfo {
+  document_count: number;
+  status: 'available' | 'not_available';
+}
+
 export interface SystemStatusResponse {
-  chroma_db: {
-    status: string;
-    collections: Record<string, number>;
-  };
-  redis: {
-    status: string;
-  };
+  status: string;
+  system: string;
+  collections: Record<string, CollectionInfo>;
 }
 
 export const getAdminSystemStatus = async () => {

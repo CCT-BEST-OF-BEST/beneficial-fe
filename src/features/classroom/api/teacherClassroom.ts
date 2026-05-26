@@ -17,6 +17,13 @@ export const getTeacherClasses = async () => {
   return apiFetch<ClassesResponse>(END_POINT.GET_TEACHER_CLASSES);
 };
 
+export const createTeacherClass = async (name: string) => {
+  return apiFetch<ClassItem>(END_POINT.POST_TEACHER_CLASSES, {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  });
+};
+
 export interface StudentItem {
   user_id: string;
   email: string;

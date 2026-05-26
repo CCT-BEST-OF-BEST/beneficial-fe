@@ -27,7 +27,9 @@ export default function Home() {
               |{' '}
               {myClass === undefined
                 ? ''
-                : myClass?.teacher_school_name ?? '미등록'}
+                : myClass
+                  ? [myClass.teacher_school_name, myClass.class_name].filter(Boolean).join(' · ')
+                  : '미등록'}
             </span>
           </h2>
           <AuthStatusButton />
@@ -61,7 +63,7 @@ export default function Home() {
             바로가기
           </h4>
         </Link>
-        <button className="row-span-1 flex-col justify-between rounded-xl bg-[#CCE997] px-7 py-6">
+        <button className="row-span-1 flex flex-col justify-between rounded-xl bg-[#CCE997] px-7 py-6">
           <div className="text-left">
             <h3 className="typography-SB4 mb-1 text-white">독서활동</h3>
             <p className="typography-R5 text-white">나만의 도서관, 독서 통장을 쌓아요!</p>
@@ -72,7 +74,7 @@ export default function Home() {
         </button>
         <Link
           to={'/student/records'}
-          className="row-span-1 flex-col justify-between rounded-xl bg-[#FFE670] px-7 py-6"
+          className="row-span-1 flex flex-col justify-between rounded-xl bg-[#FFE670] px-7 py-6"
         >
           <div className="text-left">
             <h3 className="typography-SB4 mb-1 text-white">맞춤법 카드 책장</h3>

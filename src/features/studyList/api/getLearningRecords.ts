@@ -24,3 +24,16 @@ export interface LearningRecordsResponse {
 export const getLearningRecords = async () => {
   return apiFetch<LearningRecordsResponse>(END_POINT.GET_LEARNING_RECORDS);
 };
+
+export interface StudentProgress {
+  today_solved_count: number;
+  total_solved_count: number;
+  streak_correct_count: number;
+  completed_question_count: number;
+  progress_rate: number;
+  badges: string[];
+}
+
+export const getStudentProgress = async () => {
+  return apiFetch<StudentProgress>(END_POINT.GET_STUDENT_PROGRESS);
+};

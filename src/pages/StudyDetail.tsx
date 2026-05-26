@@ -8,8 +8,9 @@ import ChatbotPopover from '@/features/studyStep/ui/ChatbotPopover.tsx';
 import { useStep } from '@/features/studyStep/hooks/StepContext.tsx';
 import { cn } from '@/shared/lib/utils.ts';
 import { useEffect } from 'react';
-import { postStep3Reset } from '@/features/studyStep/api/postStep3Reset.ts';
 import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
+
+const LESSON_STEP_KEY = (lessonId: string) => `lesson_step_${lessonId}`;
 
 const textColorMap: Record<number, string> = {
   1: 'text-sky-primary',
@@ -24,18 +25,22 @@ export default function StudyDetail() {
   if (!lessonId) return <Navigate to="/student/learning" replace />;
 
   const handleStepClick = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 3));
+    setCurrentStep(prev => {
+      const next = Math.min(prev + 1, 3);
+      localStorage.setItem(LESSON_STEP_KEY(lessonId), String(next));
+      return next;
+    });
   };
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    return () => {
-      const resetStep = async () => {
-        await postStep3Reset(lessonId);
-        setCurrentStep(1);
-      };
-      resetStep();
-    };
+    const saved = localStorage.getItem(LESSON_STEP_KEY(lessonId));
+    if (saved) {
+      const step = parseInt(saved, 10);
+      if (step >= 1 && step <= 3) setCurrentStep(step);
+    } else {
+      setCurrentStep(1);
+    }
   }, [lessonId, setCurrentStep]);
 
   return (
@@ -74,7 +79,12 @@ export default function StudyDetail() {
       <section className="flex-1 rounded-2xl bg-white px-11 pt-10 pb-12">
         {currentStep === 1 && <StudyStep1 handleStepClick={handleStepClick} />}
         {currentStep === 2 && <StudyStep2 lessonId={lessonId} handleStepClick={handleStepClick} />}
-        {currentStep === 3 && <StudyStep3 lessonId={lessonId} />}
+        {currentStep === 3 && (
+          <StudyStep3
+            lessonId={lessonId}
+            onComplete={() => localStorage.removeItem(LESSON_STEP_KEY(lessonId))}
+          />
+        )}
       </section>
     </>
   );

@@ -16,6 +16,7 @@ import StudentDetail from '@/pages/teacher/StudentDetail.tsx';
 import AIProblemGenerator from '@/features/instruction/ui/AIProblemGenerator.tsx';
 import AssignmentManagement from '@/pages/teacher/AssignmentManagement.tsx';
 import AdminDashboard from '@/pages/AdminDashboard.tsx';
+import AdminAuthPage from '@/pages/AdminAuthPage.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <RoleRedirector /> },
       { path: '/auth/:mode', element: <AuthPage /> },
+      { path: '/admin/auth/login', element: <AdminAuthPage /> },
 
       // Student Routes
       {

@@ -5,12 +5,15 @@ import Separator from '@/shared/ui/Separator.tsx';
 import StudyListItem from '@/features/studyList/ui/StudyListItem.tsx';
 import { getContentUnits } from '@/features/content/api/contentApi.ts';
 import type { UnitItem, LessonItem } from '@/features/content/api/contentApi.ts';
+import { getStudentProgress, getLearningRecords } from '@/features/studyList/api/getLearningRecords.ts';
 
 export default function StudyList() {
   const [units, setUnits] = useState<UnitItem[]>([]);
   const [selectedUnit, setSelectedUnit] = useState<UnitItem | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [progressRate, setProgressRate] = useState(0);
+  const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     getContentUnits()
@@ -21,6 +24,21 @@ export default function StudyList() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    getStudentProgress()
+      .then(res => setProgressRate(res.progress_rate))
+      .catch(() => setProgressRate(0));
+
+    getLearningRecords()
+      .then(res => {
+        const ids = new Set(
+          res.records
+            .filter(r => r.stage === 2 && r.is_correct && r.lesson_id)
+            .map(r => r.lesson_id)
+        );
+        setCompletedLessonIds(ids);
+      })
+      .catch(() => setCompletedLessonIds(new Set()));
   }, []);
 
   const lessons: LessonItem[] = selectedUnit
@@ -66,14 +84,14 @@ export default function StudyList() {
 
         <div className="gap-7.5 mt-7 flex items-end">
           <div className="bg-progress-gradient relative ml-auto mt-auto h-2 w-[432px] rounded-full">
-            <div className="absolute bottom-0 -translate-x-[5px] transition-all duration-300 ease-in-out" style={{ left: '0%' }}>
+            <div className="absolute bottom-0 -translate-x-[5px] transition-all duration-300 ease-in-out" style={{ left: `${progressRate}%` }}>
               <FlagIcon />
             </div>
           </div>
           <Separator className="h-[50px] w-[2px]" />
           <div className="space-y-2">
             <div className="typography-R1 text-gray-5">진행도</div>
-            <div className="typography-SB4 text-orange-primary">0%</div>
+            <div className="typography-SB4 text-orange-primary">{progressRate}%</div>
           </div>
         </div>
       </div>
@@ -87,7 +105,11 @@ export default function StudyList() {
           </li>
         ) : (
           lessons.map(lesson => (
-            <StudyListItem key={lesson.lesson_id} lesson={lesson} />
+            <StudyListItem
+              key={lesson.lesson_id}
+              lesson={lesson}
+              isCompleted={completedLessonIds.has(lesson.lesson_id)}
+            />
           ))
         )}
       </ul>

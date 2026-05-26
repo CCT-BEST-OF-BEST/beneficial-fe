@@ -9,7 +9,7 @@ import {
 } from '@/features/admin/api/adminApi.ts';
 import type { SystemStatusResponse } from '@/features/admin/api/adminApi.ts';
 import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
-import { Database, Server, RefreshCw, Zap, Search, Settings } from 'lucide-react';
+import { Database, Server, RefreshCw, Zap, Settings } from 'lucide-react';
 import { cn } from '@/shared/lib/utils.ts';
 
 export default function AdminDashboard() {
@@ -111,30 +111,28 @@ export default function AdminDashboard() {
             </div>
 
             {status ? (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 <div>
                   <h3 className="typography-SB5 text-gray-600 mb-2 flex items-center gap-2">
                     <Database size={16} /> Chroma DB
                   </h3>
                   <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <p className="text-sm font-mono text-green-600 mb-2">Status: {status.chroma_db?.status || 'Unknown'}</p>
-                    <div className="text-xs text-gray-500 flex flex-col gap-1">
-                      {status.chroma_db?.collections && Object.entries(status.chroma_db.collections).map(([name, count]) => (
-                        <div key={name} className="flex justify-between">
-                          <span>{name}</span>
-                          <span className="font-bold text-gray-700">{count} docs</span>
+                    <p className={`text-sm font-mono mb-3 ${status.system === 'active' ? 'text-green-600' : 'text-red-500'}`}>
+                      Status: {status.system ?? 'Unknown'}
+                    </p>
+                    <div className="text-xs flex flex-col gap-2">
+                      {status.collections && Object.entries(status.collections).map(([name, info]) => (
+                        <div key={name} className="flex justify-between items-center">
+                          <span className="text-gray-500">{name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-gray-700">{info.document_count} docs</span>
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${info.status === 'available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                              {info.status === 'available' ? '✓' : '✗'}
+                            </span>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="typography-SB5 text-gray-600 mb-2 flex items-center gap-2">
-                    <Search size={16} /> Redis Cache
-                  </h3>
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <p className="text-sm font-mono text-green-600">Status: {status.redis?.status || 'Unknown'}</p>
                   </div>
                 </div>
               </div>
