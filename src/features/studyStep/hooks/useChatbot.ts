@@ -3,7 +3,6 @@ import { postAgentChat } from '@/features/studyStep/api/postAgentChat.ts';
 import type { AgentAction } from '@/features/studyStep/api/postAgentChat.ts';
 import { deleteAgentSession } from '@/features/studyStep/api/deleteAgentSession.ts';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
-import { getAgentProfile } from '@/features/studyStep/api/getAgentProfile.ts';
 
 const INITIAL_MESSAGE = {
   role: 'bot' as const,
@@ -26,21 +25,9 @@ export const useChatbot = () => {
   const [weakConcepts, setWeakConcepts] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) {
-        setWeakConcepts([]);
-        return;
-      }
-
-      try {
-        const profile = await getAgentProfile();
-        setWeakConcepts(profile.weak_concepts.map(concept => concept.concept_key));
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchProfile();
+    if (!user) {
+      setWeakConcepts([]);
+    }
   }, [user]);
 
   const handleSendMessage = async () => {

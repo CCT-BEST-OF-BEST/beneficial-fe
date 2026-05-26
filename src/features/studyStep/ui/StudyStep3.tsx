@@ -13,7 +13,16 @@ import type { Step3Problem } from '@/features/studyStep/api/getStep3NextProblem.
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 import { postAgentChat } from '@/features/studyStep/api/postAgentChat.ts';
 import Logo from '@/assets/Logo.png';
-import { useAuthenticatedImage } from '@/shared/api/useAuthenticatedImage.ts';
+import { BookOpen, Hand, Pencil, Star, Lightbulb, Check, Image as ImageIcon } from 'lucide-react';
+
+const ICON_MAP: Record<string, any> = {
+  'book-open': BookOpen,
+  'hand-point-up': Hand,
+  'pencil': Pencil,
+  'star': Star,
+  'lightbulb': Lightbulb,
+  'check': Check,
+};
 
 export default function StudyStep3() {
   const { user } = useAuth();
@@ -31,7 +40,6 @@ export default function StudyStep3() {
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [aiSessionId, setAiSessionId] = useState<string | null>(null);
-  const { src: problemImageSrc } = useAuthenticatedImage(problem?.image);
 
   const fetchProblem = async () => {
     try {
@@ -71,6 +79,7 @@ export default function StudyStep3() {
         const result = await postStep3Answer({
           problem_id: problem.problem_id,
           answer,
+          assignment_id: problem.assignment_id,
         });
         const data = await getStep3Progress();
         if (!result || !data) return;
@@ -124,7 +133,24 @@ export default function StudyStep3() {
       <Badge type={badge} />
 
       <div className="mx-auto flex h-[190px] w-[228px] items-center justify-center">
-        {problemImageSrc && <img src={problemImageSrc} alt="" />}
+        {problem?.visual_hint ? (
+          <div className={cn(
+            "p-10 rounded-full",
+            problem.accent_color === 'primary' ? 'bg-[#FFEDED] text-[#F19B9B]' :
+            problem.accent_color === 'warning' ? 'bg-[#FFF8E5] text-orange-primary' :
+            problem.accent_color === 'success' ? 'bg-[#F2F9E9] text-green-primary' :
+            'bg-gray-100 text-gray-400'
+          )}>
+            {(() => {
+              const Icon = ICON_MAP[problem.visual_hint!] || ImageIcon;
+              return <Icon size={80} />;
+            })()}
+          </div>
+        ) : (
+          <div className="p-10 rounded-full bg-gray-100 text-gray-400">
+             <ImageIcon size={80} />
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-center gap-4">

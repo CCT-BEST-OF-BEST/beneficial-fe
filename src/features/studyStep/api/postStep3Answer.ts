@@ -3,8 +3,9 @@ import { apiFetch } from '@/shared/api/client.ts';
 import type { BadgeType } from '@/shared/ui/Badge.tsx';
 
 interface PostStep3AnswerProps {
-  problem_id: number;
+  problem_id: number | string;
   answer: string;
+  assignment_id: string | null;
 }
 
 export interface Step3AnswerResponse {
@@ -19,12 +20,13 @@ export interface Step3AnswerResponse {
   badge: BadgeType | null;
 }
 
-export const postStep3Answer = async ({ problem_id, answer }: PostStep3AnswerProps) => {
+export const postStep3Answer = async ({ problem_id, answer, assignment_id }: PostStep3AnswerProps) => {
   return apiFetch<Step3AnswerResponse>(END_POINT.POST_STEP3_ANSWER, {
     method: 'POST',
     body: JSON.stringify({
       problem_id,
       user_answer: answer,
+      assignment_id,
     }),
   });
 };

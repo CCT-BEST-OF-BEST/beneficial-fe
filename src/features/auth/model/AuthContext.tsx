@@ -7,7 +7,7 @@ export interface User {
   user_id: string;
   email: string;
   display_name: string;
-  role: 'student' | 'admin';
+  role: 'student' | 'teacher' | 'developer';
 }
 
 interface AuthTokenResponse {

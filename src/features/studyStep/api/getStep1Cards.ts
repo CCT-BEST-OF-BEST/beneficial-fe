@@ -1,13 +1,22 @@
 import { END_POINT } from '@/shared/constant/apis.ts';
 import { apiFetch } from '@/shared/api/client.ts';
 
-interface Step1CardPair {
+export interface CardContent {
+  card_id: string;
+  word: string;
+  meaning: string;
+  example_sentence: string;
+  visual_hint: string | null;
+  color_theme: string | null;
+}
+
+export interface Step1CardPair {
   pair_id: string;
   word1: string;
   word2: string;
   order: number;
-  card1: { card_id: string; front_image: string; back_image: string };
-  card2: { card_id: string; front_image: string; back_image: string };
+  card1: CardContent;
+  card2: CardContent;
 }
 
 interface Step1CardsResponse {

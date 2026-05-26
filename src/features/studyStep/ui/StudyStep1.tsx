@@ -2,11 +2,20 @@ import { useFlipCard } from '@/features/studyStep/hooks/useFlipCard.ts';
 import ArrowIcon from '@/assets/ArrowIcon.svg?react';
 import Button from '@/shared/ui/Button.tsx';
 import { cn } from '@/shared/lib/utils.ts';
-import { useAuthenticatedImage } from '@/shared/api/useAuthenticatedImage.ts';
+import { BookOpen, Hand, Pencil, Star, Lightbulb, Check } from 'lucide-react';
+import type { CardContent } from '@/features/studyStep/api/getStep1Cards.ts';
+
+const ICON_MAP: Record<string, any> = {
+  'book-open': BookOpen,
+  'hand-point-up': Hand,
+  'pencil': Pencil,
+  'star': Star,
+  'lightbulb': Lightbulb,
+  'check': Check,
+};
 
 interface FlipCardProps {
-  front: string;
-  back: string;
+  card: CardContent;
   flipped: boolean;
   onFlip: () => void;
 }
@@ -35,8 +44,7 @@ export default function StudyStep1({ handleStepClick }: { handleStepClick: () =>
 
         <div className="flex flex-col items-center gap-5">
           <FlipCard
-            front={currentPair.card1.front_image}
-            back={currentPair.card1.back_image}
+            card={currentPair.card1}
             flipped={flippedStates[0]}
             onFlip={() => handleFlip(0)}
           />
@@ -53,8 +61,7 @@ export default function StudyStep1({ handleStepClick }: { handleStepClick: () =>
 
         <div className="flex flex-col items-center gap-5">
           <FlipCard
-            front={currentPair.card2.front_image}
-            back={currentPair.card2.back_image}
+            card={currentPair.card2}
             flipped={flippedStates[1]}
             onFlip={() => handleFlip(1)}
           />
@@ -125,9 +132,11 @@ function ChoiceButton({ word, selectedWord, checking, isCorrect, onClick }: Choi
   );
 }
 
-function FlipCard({ front, back, flipped, onFlip }: FlipCardProps) {
-  const { src: frontSrc } = useAuthenticatedImage(front);
-  const { src: backSrc } = useAuthenticatedImage(back);
+function FlipCard({ card, flipped, onFlip }: FlipCardProps) {
+  const Icon = card.visual_hint && ICON_MAP[card.visual_hint] ? ICON_MAP[card.visual_hint] : BookOpen;
+  
+  const bgColorClass = card.color_theme === 'warning' ? 'bg-[#FFB14E]' : card.color_theme === 'success' ? 'bg-[#84BC46]' : 'bg-[#FFCE1F]';
+  const textColorClass = card.color_theme === 'warning' ? 'text-orange-primary' : card.color_theme === 'success' ? 'text-green-primary' : 'text-[#FFCE1F]';
 
   return (
     <div className="h-[360px] w-[248px] cursor-pointer [perspective:1000px]" onClick={onFlip}>
@@ -136,24 +145,24 @@ function FlipCard({ front, back, flipped, onFlip }: FlipCardProps) {
           flipped ? '[transform:rotateY(180deg)]' : ''
         }`}
       >
-        {frontSrc ? (
-          <img
-            src={frontSrc}
-            alt="front"
-            className="absolute h-full w-full rounded-md [backface-visibility:hidden]"
-          />
-        ) : (
-          <div className="absolute h-full w-full rounded-md bg-gray-1 [backface-visibility:hidden]" />
-        )}
-        {backSrc ? (
-          <img
-            src={backSrc}
-            alt="back"
-            className="absolute h-full w-full rounded-md [backface-visibility:hidden] [transform:rotateY(180deg)]"
-          />
-        ) : (
-          <div className="absolute h-full w-full rounded-md bg-gray-1 [backface-visibility:hidden] [transform:rotateY(180deg)]" />
-        )}
+        {/* Front */}
+        <div className={cn("absolute flex flex-col items-center justify-center h-full w-full rounded-2xl [backface-visibility:hidden] p-6 shadow-md border-4 border-white", bgColorClass)}>
+          <div className="bg-white p-4 rounded-full mb-6">
+            <Icon size={48} className={textColorClass} />
+          </div>
+          <h2 className="typography-SB1 text-white text-3xl">{card.word}</h2>
+        </div>
+        
+        {/* Back */}
+        <div className="absolute flex flex-col items-center justify-center h-full w-full rounded-2xl bg-white [backface-visibility:hidden] [transform:rotateY(180deg)] p-6 shadow-md border-4 border-gray-200">
+          <div className="mb-4 text-center">
+            <h3 className={cn("typography-SB3 text-2xl mb-2", textColorClass)}>{card.word}</h3>
+            <p className="typography-R4 text-gray-700">{card.meaning}</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-4 w-full">
+            <p className="typography-R5 text-gray-600 text-center">"{card.example_sentence}"</p>
+          </div>
+        </div>
       </div>
     </div>
   );

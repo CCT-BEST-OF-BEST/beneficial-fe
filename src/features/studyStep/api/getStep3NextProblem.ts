@@ -3,11 +3,14 @@ import { apiFetch } from '@/shared/api/client.ts';
 import type { BadgeType } from '@/shared/ui/Badge.tsx';
 
 export interface Step3Problem {
-  problem_id: number;
-  image: string;
+  problem_id: number | string;
+  visual_hint: string | null;
+  accent_color: string | null;
   sentence_part1: string;
   sentence_part2: string;
   badge: BadgeType | null;
+  source: 'base' | 'assignment';
+  assignment_id: string | null;
 }
 
 export interface Step3NextProblemResponse {

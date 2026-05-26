@@ -33,7 +33,7 @@ export default function Home() {
 
       <section className="gap-y-7.5 grid flex-1 grid-cols-[55%_44%] grid-rows-2 gap-x-10">
         <Link
-          to={'/study'}
+          to={'/student/study'}
           className="relative row-span-2 flex flex-col overflow-hidden rounded-xl bg-[#FFB14E] px-7 py-6"
         >
           <AirplaneImg className="absolute -left-7 top-0 w-full" />
@@ -56,7 +56,7 @@ export default function Home() {
           </h4>
         </button>
         <Link
-          to={'/records'}
+          to={'/student/records'}
           className="row-span-1 flex-col justify-between rounded-xl bg-[#FFE670] px-7 py-6"
         >
           <div className="text-left">
