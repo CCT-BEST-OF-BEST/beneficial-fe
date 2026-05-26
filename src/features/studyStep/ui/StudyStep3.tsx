@@ -24,7 +24,11 @@ const ICON_MAP: Record<string, any> = {
   'check': Check,
 };
 
-export default function StudyStep3() {
+interface StudyStep3Props {
+  lessonId: string;
+}
+
+export default function StudyStep3({ lessonId }: StudyStep3Props) {
   const { user } = useAuth();
   const [progress, setProgress] = useState(0);
   const [problem, setProblem] = useState<Step3Problem | null>(null);
@@ -36,14 +40,13 @@ export default function StudyStep3() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // AI 설명 관련 state
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [aiSessionId, setAiSessionId] = useState<string | null>(null);
 
   const fetchProblem = async () => {
     try {
-      const data = await getStep3NextProblem();
+      const data = await getStep3NextProblem(lessonId);
       if (!data) return;
 
       if (data.is_completed) {
@@ -68,7 +71,8 @@ export default function StudyStep3() {
 
   useEffect(() => {
     fetchProblem();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonId]);
 
   const handleSubmit = async () => {
     if (!problem) return;
@@ -77,11 +81,12 @@ export default function StudyStep3() {
     if (!isAnswered) {
       try {
         const result = await postStep3Answer({
+          lessonId,
           problem_id: problem.problem_id,
           answer,
           assignment_id: problem.assignment_id,
         });
-        const data = await getStep3Progress();
+        const data = await getStep3Progress(lessonId);
         if (!result || !data) return;
 
         setCorrectAnswer(result.correct_answer);
@@ -148,7 +153,7 @@ export default function StudyStep3() {
           </div>
         ) : (
           <div className="p-10 rounded-full bg-gray-100 text-gray-400">
-             <ImageIcon size={80} />
+            <ImageIcon size={80} />
           </div>
         )}
       </div>
@@ -156,9 +161,7 @@ export default function StudyStep3() {
       <div className="flex items-center justify-center gap-4">
         <span className="typography-M2">{problem ? `(${problem.problem_id})` : ''}</span>
         <span className="typography-M1">{problem?.sentence_part1}</span>
-        <div
-          className={cn('typography-SB1 min-w-[140px] rounded-lg bg-[#F9F9F9] py-3 text-center')}
-        >
+        <div className={cn('typography-SB1 min-w-[140px] rounded-lg bg-[#F9F9F9] py-3 text-center')}>
           <span className="text-[#D9D9D9]">{correctAnswer || '?'}</span>
         </div>
         <span className="typography-M1">{problem?.sentence_part2}</span>
@@ -182,7 +185,6 @@ export default function StudyStep3() {
         </Button>
       </div>
 
-      {/* 오답 후 AI 설명 버튼 */}
       {isAnswered && isCorrect === false && user && (
         <div className="mx-auto mb-2 w-3/4">
           {!aiExplanation && !isLoadingAI && (

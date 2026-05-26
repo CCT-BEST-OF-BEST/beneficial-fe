@@ -22,7 +22,7 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, displayName: string) => Promise<void>;
+  signup: (email: string, password: string, displayName: string, role?: 'student' | 'teacher', schoolName?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -89,12 +89,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user);
   };
 
-  const signup = async (email: string, password: string, displayName: string) => {
+  const signup = async (email: string, password: string, displayName: string, role: 'student' | 'teacher' = 'student', schoolName?: string) => {
     await apiFetch<User>(
       '/auth/signup',
       {
         method: 'POST',
-        body: JSON.stringify({ email, password, display_name: displayName }),
+        body: JSON.stringify({ email, password, display_name: displayName, role, school_name: schoolName ?? null }),
       },
       { skipAuth: true, skipRefresh: true }
     );

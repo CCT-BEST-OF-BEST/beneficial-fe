@@ -1,11 +1,21 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AirplaneImg from '@/assets/AirplaneImg.svg?react';
 import CharacterImg from '@/assets/CharacterImg.svg?react';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
+import { getMyClass } from '@/features/classroom/api/studentClassroom.ts';
+import type { MyClassInfo } from '@/features/classroom/api/studentClassroom.ts';
 
 export default function Home() {
   const { user } = useAuth();
+  const [myClass, setMyClass] = useState<MyClassInfo | null | undefined>(undefined);
+
+  useEffect(() => {
+    getMyClass()
+      .then(setMyClass)
+      .catch(() => setMyClass(null));
+  }, []);
 
   return (
     <>
@@ -13,7 +23,12 @@ export default function Home() {
         <div className="mb-6 flex items-center justify-between">
           <h2 className="typography-SB5 inline-block rounded-full bg-white px-5 py-3 text-[#8B8B8B]">
             <span className="font-bold">{user?.display_name ?? '방문 학생'}</span>{' '}
-            <span className="font-light">| 소담 다함께 돌봄센터</span>
+            <span className="font-light">
+              |{' '}
+              {myClass === undefined
+                ? ''
+                : myClass?.teacher_school_name ?? '미등록'}
+            </span>
           </h2>
           <AuthStatusButton />
         </div>
@@ -33,7 +48,7 @@ export default function Home() {
 
       <section className="gap-y-7.5 grid flex-1 grid-cols-[55%_44%] grid-rows-2 gap-x-10">
         <Link
-          to={'/student/study'}
+          to={'/student/learning'}
           className="relative row-span-2 flex flex-col overflow-hidden rounded-xl bg-[#FFB14E] px-7 py-6"
         >
           <AirplaneImg className="absolute -left-7 top-0 w-full" />

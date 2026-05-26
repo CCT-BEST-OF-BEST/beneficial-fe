@@ -1,10 +1,14 @@
 import { apiFetch } from '@/shared/api/client.ts';
+import { END_POINT } from '@/shared/constant/apis.ts';
 
 export interface LearningRecord {
   user_id: string;
   temp_user_id: string | null;
   stage: number;
   question_id: string;
+  unit_id: string | null;
+  lesson_id: string;
+  problem_key: string;
   concept_key: string;
   user_answer: string;
   correct_answer: string;
@@ -18,5 +22,5 @@ export interface LearningRecordsResponse {
 }
 
 export const getLearningRecords = async () => {
-  return apiFetch<LearningRecordsResponse>('/learning/records/me');
+  return apiFetch<LearningRecordsResponse>(END_POINT.GET_LEARNING_RECORDS);
 };

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { 
-  getAdminSystemStatus, 
-  postAdminInitializeAll, 
-  postAdminSeedData, 
-  postAdminRebuildVectorIndex, 
-  postAdminRebuildBm25, 
+import {
+  getAdminSystemStatus,
+  postAdminInitializeAll,
+  postAdminSeedData,
+  postAdminRebuildVectorIndex,
+  postAdminRebuildBm25,
   postAdminBuildHypotheticalQuestions,
-  SystemStatusResponse
 } from '@/features/admin/api/adminApi.ts';
+import type { SystemStatusResponse } from '@/features/admin/api/adminApi.ts';
 import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
 import { Database, Server, RefreshCw, Zap, Search, Settings } from 'lucide-react';
 import { cn } from '@/shared/lib/utils.ts';

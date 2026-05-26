@@ -1,3 +1,4 @@
+import { useParams, Navigate } from 'react-router-dom';
 import StudyStep1 from '@/features/studyStep/ui/StudyStep1.tsx';
 import StudyStep2 from '@/features/studyStep/ui/StudyStep2.tsx';
 import StudyStep3 from '@/features/studyStep/ui/StudyStep3.tsx';
@@ -17,21 +18,25 @@ const textColorMap: Record<number, string> = {
 };
 
 export default function StudyDetail() {
+  const { lessonId } = useParams<{ lessonId: string }>();
   const { currentStep, setCurrentStep } = useStep();
+
+  if (!lessonId) return <Navigate to="/student/learning" replace />;
 
   const handleStepClick = () => {
     setCurrentStep(prev => Math.min(prev + 1, 3));
   };
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     return () => {
       const resetStep = async () => {
-        await postStep3Reset();
+        await postStep3Reset(lessonId);
         setCurrentStep(1);
       };
       resetStep();
     };
-  }, [setCurrentStep]);
+  }, [lessonId, setCurrentStep]);
 
   return (
     <>
@@ -68,8 +73,8 @@ export default function StudyDetail() {
 
       <section className="flex-1 rounded-2xl bg-white px-11 pt-10 pb-12">
         {currentStep === 1 && <StudyStep1 handleStepClick={handleStepClick} />}
-        {currentStep === 2 && <StudyStep2 handleStepClick={handleStepClick} />}
-        {currentStep === 3 && <StudyStep3 />}
+        {currentStep === 2 && <StudyStep2 lessonId={lessonId} handleStepClick={handleStepClick} />}
+        {currentStep === 3 && <StudyStep3 lessonId={lessonId} />}
       </section>
     </>
   );

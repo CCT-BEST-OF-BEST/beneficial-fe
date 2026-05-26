@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import CompleteImg from '@/assets/CompleteImg.png';
 import Button from '@/shared/ui/Button.tsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { postStep3Reset } from '@/features/studyStep/api/postStep3Reset.ts';
 
 interface CompleteDialogProps {
@@ -10,10 +10,13 @@ interface CompleteDialogProps {
 
 export default function CompleteDialog({ open }: CompleteDialogProps) {
   const navigate = useNavigate();
+  const { lessonId } = useParams<{ lessonId: string }>();
 
   const handleClick = async () => {
-    await postStep3Reset();
-    navigate('/');
+    if (lessonId) {
+      await postStep3Reset(lessonId);
+    }
+    navigate('/student');
   };
 
   return (

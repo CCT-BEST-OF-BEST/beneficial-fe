@@ -27,7 +27,12 @@ interface Problem {
   sentence_part2: string;
 }
 
-export default function StudyStep2({ handleStepClick }: { handleStepClick: () => void }) {
+interface StudyStep2Props {
+  lessonId: string;
+  handleStepClick: () => void;
+}
+
+export default function StudyStep2({ lessonId, handleStepClick }: StudyStep2Props) {
   const {
     problems,
     availableCards,
@@ -40,7 +45,7 @@ export default function StudyStep2({ handleStepClick }: { handleStepClick: () =>
     handleDragEnd,
     handleRemoveCard,
     handleCheckAnswers,
-  } = useDragDropCard();
+  } = useDragDropCard(lessonId);
   const problemRangeLabel = `01 ~ ${String(problems?.problems?.length ?? 20).padStart(2, '0')}`;
 
   return (

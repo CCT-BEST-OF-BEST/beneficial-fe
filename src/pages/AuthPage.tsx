@@ -15,6 +15,8 @@ export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [role, setRole] = useState<'student' | 'teacher'>('student');
+  const [schoolName, setSchoolName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -26,7 +28,7 @@ export default function AuthPage() {
     const from = state?.from;
 
     if (!from?.pathname || from.pathname.startsWith('/auth')) {
-      return '/study';
+      return '/';
     }
 
     return `${from.pathname}${from.search ?? ''}${from.hash ?? ''}`;
@@ -35,6 +37,7 @@ export default function AuthPage() {
   const canSubmit = useMemo(() => {
     if (!email.trim() || !password.trim()) return false;
     if (isSignup && !displayName.trim()) return false;
+    if (isSignup && role === 'teacher' && !schoolName.trim()) return false;
     return password.length >= 8;
   }, [displayName, email, isSignup, password]);
 
@@ -51,7 +54,7 @@ export default function AuthPage() {
       setErrorMessage('');
 
       if (isSignup) {
-        await signup(email, password, displayName);
+        await signup(email, password, displayName, role, role === 'teacher' ? schoolName : undefined);
       } else {
         await login(email, password);
       }
@@ -84,15 +87,53 @@ export default function AuthPage() {
 
         <form className="space-y-5" onSubmit={handleSubmit}>
           {isSignup && (
-            <label className="block">
-              <span className="typography-SB3 text-gray-5 mb-2 block">이름</span>
-              <input
-                value={displayName}
-                onChange={event => setDisplayName(event.target.value)}
-                className="border-gray-2 focus:border-orange-primary typography-R4 h-13 w-full rounded-xl border px-5 outline-none"
-                placeholder="이름을 입력해주세요"
-              />
-            </label>
+            <>
+              <div>
+                <span className="typography-SB3 text-gray-5 mb-2 block">역할</span>
+                <div className="grid grid-cols-2 gap-3">
+                  {(['student', 'teacher'] as const).map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      className={[
+                        'flex flex-col items-center justify-center gap-1 rounded-xl border py-4 transition-colors',
+                        role === r
+                          ? 'border-orange-primary bg-orange-50'
+                          : 'border-gray-2 hover:border-gray-3',
+                      ].join(' ')}
+                    >
+                      <span className="text-2xl">{r === 'student' ? '🎒' : '📚'}</span>
+                      <span className={['typography-SB3', role === r ? 'text-orange-primary' : 'text-gray-5'].join(' ')}>
+                        {r === 'student' ? '학생' : '선생님'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <label className="block">
+                <span className="typography-SB3 text-gray-5 mb-2 block">이름</span>
+                <input
+                  value={displayName}
+                  onChange={event => setDisplayName(event.target.value)}
+                  className="border-gray-2 focus:border-orange-primary typography-R4 h-13 w-full rounded-xl border px-5 outline-none"
+                  placeholder="이름을 입력해주세요"
+                />
+              </label>
+
+              {role === 'teacher' && (
+                <label className="block">
+                  <span className="typography-SB3 text-gray-5 mb-2 block">학교·기관명</span>
+                  <input
+                    value={schoolName}
+                    onChange={event => setSchoolName(event.target.value)}
+                    className="border-gray-2 focus:border-orange-primary typography-R4 h-13 w-full rounded-xl border px-5 outline-none"
+                    placeholder="예) 소담 다함께 돌봄센터"
+                  />
+                </label>
+              )}
+            </>
           )}
 
           <label className="block">

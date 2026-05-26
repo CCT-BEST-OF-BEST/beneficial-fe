@@ -84,3 +84,9 @@ export const patchCancelAssignment = async (assignmentId: string) => {
     method: 'PATCH',
   });
 };
+
+export const patchCompleteAssignment = async (assignmentId: string) => {
+  return apiFetch(END_POINT.PATCH_COMPLETE_ASSIGNMENT(assignmentId), {
+    method: 'PATCH',
+  });
+};

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { postGenerateProblems, patchAssignAssignment, GenerateProblemsResponse } from '@/features/instruction/api/teacherInstruction.ts';
+import { postGenerateProblems, patchAssignAssignment } from '@/features/instruction/api/teacherInstruction.ts';
+import type { GenerateProblemsResponse } from '@/features/instruction/api/teacherInstruction.ts';
 import HomeButton from '@/shared/ui/HomeButton.tsx';
 import Logo from '@/assets/Logo.png';
 import { cn } from '@/shared/lib/utils.ts';
@@ -19,11 +20,9 @@ export default function AIProblemGenerator() {
   const [count, setCount] = useState<number>(3);
   const [difficulty, setDifficulty] = useState<'easy' | 'normal' | 'hard'>('normal');
   
-  const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<GenerateProblemsResponse | null>(null);
 
   const handleGenerate = async () => {
-    setIsGenerating(true);
     setStep(2);
 
     try {
@@ -44,8 +43,6 @@ export default function AIProblemGenerator() {
       console.error(err);
       alert('문제 생성 중 오류가 발생했습니다.');
       setStep(1);
-    } finally {
-      setIsGenerating(false);
     }
   };
 

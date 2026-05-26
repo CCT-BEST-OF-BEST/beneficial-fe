@@ -7,12 +7,14 @@ import StudyDetail from '@/pages/StudyDetail.tsx';
 import NotFoundPage from '@/shared/ui/NotFoundPage.tsx';
 import AuthPage from '@/pages/AuthPage.tsx';
 import LearningRecords from '@/pages/LearningRecords.tsx';
+import IroPage from '@/pages/IroPage.tsx';
 import RoleRoute from '@/shared/ui/RoleRoute.tsx';
 import RoleRedirector from '@/shared/ui/RoleRedirector.tsx';
 import TeacherDashboard from '@/pages/teacher/TeacherDashboard.tsx';
 import ClassDetail from '@/pages/teacher/ClassDetail.tsx';
 import StudentDetail from '@/pages/teacher/StudentDetail.tsx';
 import AIProblemGenerator from '@/features/instruction/ui/AIProblemGenerator.tsx';
+import AssignmentManagement from '@/pages/teacher/AssignmentManagement.tsx';
 import AdminDashboard from '@/pages/AdminDashboard.tsx';
 
 export const router = createBrowserRouter([
@@ -23,14 +25,15 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <RoleRedirector /> },
       { path: '/auth/:mode', element: <AuthPage /> },
-      
+
       // Student Routes
       {
         element: <RoleRoute allowedRoles={['student']} />,
         children: [
           { path: '/student', element: <Home /> },
-          { path: '/student/study', element: <Study /> },
-          { path: '/student/study/:studyId', element: <StudyDetail /> },
+          { path: '/student/learning', element: <Study /> },
+          { path: '/student/learning/:lessonId', element: <StudyDetail /> },
+          { path: '/student/iro', element: <IroPage /> },
           { path: '/student/records', element: <LearningRecords /> },
         ],
       },
@@ -43,6 +46,7 @@ export const router = createBrowserRouter([
           { path: '/teacher/classes/:classId', element: <ClassDetail /> },
           { path: '/teacher/students/:userId', element: <StudentDetail /> },
           { path: '/teacher/instruction/generate', element: <AIProblemGenerator /> },
+          { path: '/teacher/instruction/assignments', element: <AssignmentManagement /> },
         ],
       },
 

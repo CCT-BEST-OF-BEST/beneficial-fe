@@ -20,6 +20,6 @@ export interface Step3NextProblemResponse {
   problem?: Step3Problem;
 }
 
-export const getStep3NextProblem = async () => {
-  return apiFetch<Step3NextProblemResponse>(END_POINT.GET_STEP3_NEXT_PROBLEM);
+export const getStep3NextProblem = async (lessonId: string) => {
+  return apiFetch<Step3NextProblemResponse>(END_POINT.GET_STEP3_NEXT_PROBLEM(lessonId));
 };

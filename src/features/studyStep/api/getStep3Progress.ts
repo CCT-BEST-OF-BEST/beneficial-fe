@@ -16,6 +16,6 @@ export interface Step3ProgressResponse {
   is_completed: boolean;
 }
 
-export const getStep3Progress = async () => {
-  return apiFetch<Step3ProgressResponse>(END_POINT.GET_STEP3_PROGRESS);
+export const getStep3Progress = async (lessonId: string) => {
+  return apiFetch<Step3ProgressResponse>(END_POINT.GET_STEP3_PROGRESS(lessonId));
 };

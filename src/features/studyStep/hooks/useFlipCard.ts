@@ -4,21 +4,13 @@ import {
   postStep1CardCheck,
   type Step1CardCheckResponse,
 } from '@/features/studyStep/api/postStep1CardCheck.ts';
-
-interface CardPair {
-  pair_id: string;
-  word1: string;
-  word2: string;
-  order: number;
-  card1: { card_id: string; front_image: string; back_image: string };
-  card2: { card_id: string; front_image: string; back_image: string };
-}
+import type { Step1CardPair } from '@/features/studyStep/api/getStep1Cards.ts';
 
 export const useFlipCard = () => {
   const [cards, setCards] = useState<{
     success: boolean;
     total_pairs: number;
-    card_pairs: CardPair[];
+    card_pairs: Step1CardPair[];
   } | null>(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -27,16 +19,12 @@ export const useFlipCard = () => {
   const [checkResult, setCheckResult] = useState<Step1CardCheckResponse | null>(null);
   const [checking, setChecking] = useState(false);
 
-  // 카드 API 요청
   useEffect(() => {
     const fetchCards = async () => {
       try {
         const data = await getStep1Cards();
         if (!data) return;
-
-        setCards({
-          ...data,
-        });
+        setCards(data);
       } catch (error) {
         console.error(error);
       }

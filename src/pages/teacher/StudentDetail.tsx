@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getTeacherStudentProfile, getTeacherStudentRecords, StudentProfileResponse, LearningRecord } from '@/features/classroom/api/teacherClassroom.ts';
+import { getTeacherStudentProfile, getTeacherStudentRecords } from '@/features/classroom/api/teacherClassroom.ts';
+import type { StudentProfileResponse, LearningRecord } from '@/features/classroom/api/teacherClassroom.ts';
 import HomeButton from '@/shared/ui/HomeButton.tsx';
-import Button from '@/shared/ui/Button.tsx';
 import { cn } from '@/shared/lib/utils.ts';
 import { CheckCircle2, XCircle } from 'lucide-react';
 

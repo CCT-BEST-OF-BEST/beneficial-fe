@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTeacherClasses, ClassItem } from '@/features/classroom/api/teacherClassroom.ts';
-import { getTeacherAssignments, Assignment } from '@/features/instruction/api/teacherInstruction.ts';
+import { getTeacherClasses, type ClassItem } from '@/features/classroom/api/teacherClassroom.ts';
+import { getTeacherAssignments, type Assignment } from '@/features/instruction/api/teacherInstruction.ts';
 import { useAuth } from '@/features/auth/model/AuthContext.tsx';
 import AuthStatusButton from '@/features/auth/ui/AuthStatusButton.tsx';
 
@@ -11,13 +11,13 @@ export default function TeacherDashboard() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
 
   useEffect(() => {
-    getTeacherClasses().then((res) => {
-      setClasses(res.classes || []);
-    }).catch(console.error);
+    getTeacherClasses()
+      .then(res => setClasses(res.classes || []))
+      .catch(console.error);
 
-    getTeacherAssignments().then((res) => {
-      setAssignments(res.assignments || []);
-    }).catch(console.error);
+    getTeacherAssignments()
+      .then(res => setAssignments(res.assignments || []))
+      .catch(console.error);
   }, []);
 
   const draftAssignments = assignments.filter(a => a.status === 'draft');
@@ -33,11 +33,12 @@ export default function TeacherDashboard() {
       </header>
 
       <div className="grid grid-cols-2 gap-8">
+        {/* 내 담당 반 */}
         <section>
           <h2 className="typography-SB4 mb-4 text-gray-800">내 담당 반</h2>
           <div className="flex flex-col gap-4">
             {classes.length > 0 ? (
-              classes.map((cls) => (
+              classes.map(cls => (
                 <Link
                   key={cls.class_id}
                   to={`/teacher/classes/${cls.class_id}`}
@@ -55,24 +56,52 @@ export default function TeacherDashboard() {
           </div>
         </section>
 
+        {/* 배정 관리 요약 */}
         <section>
-          <h2 className="typography-SB4 mb-4 text-gray-800">최근 배정 관리</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="typography-SB4 text-gray-800">최근 배정 관리</h2>
+            <Link
+              to="/teacher/instruction/assignments"
+              className="typography-R5 text-orange-primary hover:underline"
+            >
+              전체 보기 →
+            </Link>
+          </div>
           <div className="flex flex-col gap-4">
-            <div className="rounded-2xl bg-[#FFF8E5] p-6 shadow-sm border border-[#F4E6B6]">
+            <Link
+              to="/teacher/instruction/assignments?status=draft"
+              className="rounded-2xl bg-[#FFF8E5] p-6 shadow-sm border border-[#F4E6B6] hover:shadow-md transition-shadow"
+            >
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="typography-SB4 text-orange-primary">검토 대기 중인 초안</h3>
-                <span className="typography-SB4 text-orange-primary bg-white px-3 py-1 rounded-full">{draftAssignments.length}건</span>
+                <span className="typography-SB4 text-orange-primary bg-white px-3 py-1 rounded-full">
+                  {draftAssignments.length}건
+                </span>
               </div>
-              <p className="typography-R5 text-gray-600 mb-4">AI가 생성한 문제를 검토하고 학생들에게 배정해주세요.</p>
-            </div>
+              <p className="typography-R5 text-gray-600">AI가 생성한 문제를 검토하고 학생들에게 배정해주세요.</p>
+            </Link>
 
-            <div className="rounded-2xl bg-[#F2F9E9] p-6 shadow-sm border border-[#E1EFD5]">
+            <Link
+              to="/teacher/instruction/assignments?status=assigned"
+              className="rounded-2xl bg-[#F2F9E9] p-6 shadow-sm border border-[#E1EFD5] hover:shadow-md transition-shadow"
+            >
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="typography-SB4 text-green-primary">진행 중인 배정</h3>
-                <span className="typography-SB4 text-green-primary bg-white px-3 py-1 rounded-full">{activeAssignments.length}건</span>
+                <span className="typography-SB4 text-green-primary bg-white px-3 py-1 rounded-full">
+                  {activeAssignments.length}건
+                </span>
               </div>
-              <p className="typography-R5 text-gray-600 mb-4">학생들이 배정받은 문제를 풀고 있습니다.</p>
-            </div>
+              <p className="typography-R5 text-gray-600">학생들이 배정받은 문제를 풀고 있습니다.</p>
+            </Link>
+          </div>
+
+          <div className="mt-4">
+            <Link
+              to="/teacher/instruction/generate"
+              className="block w-full rounded-2xl bg-orange-primary py-4 text-center typography-SB4 text-white hover:bg-orange-600 transition-colors shadow-md shadow-orange-200"
+            >
+              + AI 맞춤 문제 만들기
+            </Link>
           </div>
         </section>
       </div>

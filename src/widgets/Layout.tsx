@@ -11,16 +11,26 @@ export default function Layout() {
   const { pathname } = useLocation();
 
   const getBackgroundImage = () => {
-    if (pathname === '/') return HomeBG;
-    if (pathname === '/study') return StudyListBG;
+    if (pathname === '/' || pathname === '/student') return HomeBG;
 
-    return (
-      {
-        1: Step1BG,
-        2: Step2BG,
-        3: Step3BG,
-      }[currentStep] || Step1BG
-    );
+    // 학습 목록 페이지
+    if (pathname === '/student/learning') return StudyListBG;
+
+    // 학습 상세 (lesson) 페이지 — step 기반 배경
+    if (pathname.startsWith('/student/learning/')) {
+      return (
+        {
+          1: Step1BG,
+          2: Step2BG,
+          3: Step3BG,
+        }[currentStep] || Step1BG
+      );
+    }
+
+    // 이로 챗봇 페이지
+    if (pathname === '/student/iro') return HomeBG;
+
+    return HomeBG;
   };
 
   return (

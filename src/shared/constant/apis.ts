@@ -8,29 +8,42 @@ export const END_POINT = {
 
   // Agent
   POST_AGENT_CHAT: `/agent/chat`,
-  GET_AGENT_PROFILE: `/agent/profile/me`,
+  DELETE_AGENT_SESSION: (sessionId: string) => `/agent/session/${sessionId}`,
 
-  // Chatbot
+  // RAG 채팅 (단발)
   POST_USER_CHAT: `/chat/`,
 
-  //Student
+  // Content (단원/차시 트리)
+  GET_CONTENT_UNITS: `/content/units`,
+  GET_CONTENT_LESSON: (lessonId: string) => `/content/lessons/${lessonId}`,
+
+  // Student
   GET_STUDENT_PROGRESS: `/student/me/progress`,
   GET_STUDENT_ASSIGNMENTS: `/student/learning/assignments`,
+  GET_LEARNING_RECORDS: `/student/learning/records/me`,
+  GET_STUDENT_MY_CLASS: `/student/my-class`,
 
-  //Study
+  // Stage 1
   GET_STEP1_CARDS: `/student/learning/stage1/cards`,
   POST_STEP1_CARD_CHECK: `/student/learning/stage1/submit-card-check`,
-  GET_STEP2_PROBLEMS: `/student/learning/stage2/problems`,
-  POST_STEP2_ANSWER: `/student/learning/stage2/submit-answer`,
-  GET_STEP3_PROBLEMS: `/student/learning/stage3/problems`,
-  GET_STEP3_NEXT_PROBLEM: `/student/learning/stage3/next-problem`,
-  POST_STEP3_ANSWER: `/student/learning/stage3/submit-answer`,
-  GET_STEP3_PROGRESS: `/student/learning/stage3/progress`,
-  POST_STEP3_RESET: `/student/learning/stage3/reset-progress`,
+
+  // Stage 2 (lesson_id 쿼리 파라미터 포함)
+  GET_STEP2_PROBLEMS: (lessonId: string) => `/student/learning/stage2/problems?lesson_id=${lessonId}`,
+  POST_STEP2_ANSWER: (lessonId: string) => `/student/learning/stage2/submit-answer?lesson_id=${lessonId}`,
+
+  // Stage 3 (lesson_id 쿼리 파라미터 포함)
+  GET_STEP3_PROBLEMS: (lessonId: string) => `/student/learning/stage3/problems?lesson_id=${lessonId}`,
+  GET_STEP3_NEXT_PROBLEM: (lessonId: string) => `/student/learning/stage3/next-problem?lesson_id=${lessonId}`,
+  POST_STEP3_ANSWER: (lessonId: string) => `/student/learning/stage3/submit-answer?lesson_id=${lessonId}`,
+  GET_STEP3_PROGRESS: (lessonId: string) => `/student/learning/stage3/progress?lesson_id=${lessonId}`,
+  POST_STEP3_RESET: (lessonId: string) => `/student/learning/stage3/reset-progress?lesson_id=${lessonId}`,
 
   // Teacher Classroom
   GET_TEACHER_CLASSES: `/teacher/classes`,
   GET_TEACHER_CLASS_STUDENTS: (classId: string) => `/teacher/classes/${classId}/students`,
+  POST_TEACHER_CLASS_STUDENT: (classId: string) => `/teacher/classes/${classId}/students`,
+  DELETE_TEACHER_CLASS_STUDENT: (classId: string, studentId: string) => `/teacher/classes/${classId}/students/${studentId}`,
+  GET_TEACHER_SEARCH_STUDENTS: `/teacher/classes/search-students`,
   GET_TEACHER_STUDENT_PROFILE: (userId: string) => `/teacher/students/${userId}/profile`,
   GET_TEACHER_STUDENT_RECORDS: (userId: string) => `/teacher/students/${userId}/records`,
 

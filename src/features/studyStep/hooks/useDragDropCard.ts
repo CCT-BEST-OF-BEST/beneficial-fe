@@ -19,7 +19,7 @@ export interface AnswerCard {
   value: string;
 }
 
-export const useDragDropCard = () => {
+export const useDragDropCard = (lessonId: string) => {
   const [problems, setProblems] = useState<ProblemsData | null>(null);
   const [answerCards, setAnswerCards] = useState<AnswerCard[]>([]);
   const [droppedCards, setDroppedCards] = useState<Record<number, AnswerCard | null>>({});
@@ -30,7 +30,7 @@ export const useDragDropCard = () => {
   useEffect(() => {
     const fetchProblems = async () => {
       try {
-        const data = await getStep2Problems();
+        const data = await getStep2Problems(lessonId);
         setProblems(data);
         setAnswerCards(
           data.answer_options.map((answer, index) => ({ id: `answer-${index}`, value: answer }))
@@ -41,7 +41,7 @@ export const useDragDropCard = () => {
     };
 
     fetchProblems();
-  }, []);
+  }, [lessonId]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const cardId = event.active.id as string;
@@ -91,6 +91,7 @@ export const useDragDropCard = () => {
       const results = await Promise.all(
         problems.problems.map(problem =>
           postStep2Answer({
+            lessonId,
             problemId: problem.problem_id,
             answer: droppedCards[problem.problem_id]?.value ?? '',
           })
@@ -122,7 +123,6 @@ export const useDragDropCard = () => {
     }
   };
 
-  // 모든 문제에 답이 채워져 있는지 확인
   const isAllAnswered =
     problems?.problems?.every(
       problem =>
