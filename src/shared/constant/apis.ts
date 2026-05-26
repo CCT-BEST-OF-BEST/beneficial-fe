@@ -41,4 +41,12 @@ export const END_POINT = {
   PATCH_ASSIGN_ASSIGNMENT: (assignmentId: string) => `/teacher/instruction/assignments/${assignmentId}/assign`,
   PATCH_CANCEL_ASSIGNMENT: (assignmentId: string) => `/teacher/instruction/assignments/${assignmentId}/cancel`,
   PATCH_COMPLETE_ASSIGNMENT: (assignmentId: string) => `/teacher/instruction/assignments/${assignmentId}/complete`,
+
+  // Admin
+  GET_ADMIN_SYSTEM_STATUS: `/admin/system-status`,
+  POST_ADMIN_INITIALIZE_ALL: `/admin/initialize-all`,
+  POST_ADMIN_SEED_DATA: `/admin/seed-data`,
+  POST_ADMIN_REBUILD_VECTOR: `/admin/rebuild-vector-index`,
+  POST_ADMIN_REBUILD_BM25: `/admin/rebuild-bm25`,
+  POST_ADMIN_HYPOTHETICAL_QUESTIONS: `/admin/build-hypothetical-questions`,
 };
